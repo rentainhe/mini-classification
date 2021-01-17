@@ -4,7 +4,7 @@ from utils.train_engine import train_engine
 
 def parse_args():
     parser = argparse.ArgumentParser(description='MAC_Classification Args')
-    parser.add_argument('--dataset', type=str, choices=['cifar10','cifar100','imagenet'], required=True, help='choose the dataset')
+    parser.add_argument('--config', type=str, choices=['cifar10','cifar100','imagenet'], required=True, help='choose the dataset')
     parser.add_argument('--gpu', type=str, help="gpu choose, eg. '0,1,2,...' ")
     parser.add_argument('--run', type=str, dest='run_mode',choices=['train','test'])
     parser.add_argument('--seed', type=int, help='fix random seed')
@@ -13,7 +13,7 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    cfg_file = "configs/{}.yaml".format(args.dataset)
+    cfg_file = "configs/{}.yaml".format(args.config)
     with open(cfg_file, 'r') as f:
         yaml_dict = yaml.load(f)
 
@@ -26,9 +26,9 @@ if __name__ == '__main__':
 
     print("Hyper parameters:")
     print(configs)
-
-    if configs.run_mode == 'train':
-        train_engine(configs)
+    print(configs.dataset)
+    # if configs.run_mode == 'train':
+    #     train_engine(configs)
 
     # net = resnet18()
     # get_optim(configs,net)

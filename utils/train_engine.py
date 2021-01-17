@@ -15,13 +15,13 @@ from optim.get_optim import get_optim
 from dataloader.get_dataloader import get_train_loader, get_test_loader
 
 def train_engine(__C):
-    model = get_network(__C)
 
     # define training loop in LightningModule
-    class Extend_Pytorch_Lightning(model, LightningModule):
+    class Extend_Pytorch_Lightning(LightningModule):
         def __init__(self, __C):
             super().__init__()
             self.__C = __C
+            self.net = get_network(__C)
 
         def training_step(self, batch, batch_idx):
             images, labels = batch
