@@ -54,11 +54,15 @@ class LitMNIST(LightningModule):
 
         return loss
 
-    def test_step(self, batch, batch_idx):
+
+    def validation_step(self, batch, batch_idx):
         x, y = batch
         logits = self(x)
         loss = F.nll_loss(logits,y)
-        self.log('val_loss', loss, on_step=True)
+
+        labels_hat = torch.argmax(logits, dim=1)
+        test_acc = torch.sum(y == labels_hat).item() / (len(y) * 1.0)
+        self.log_dict({'test_loss':loss, 'test_acc':test_acc}, on_epoch=True)
 
     def configure_optimizers(self):
         return optim.SGD(self.parameters(), lr=1e-3)
@@ -69,5 +73,5 @@ class LitMNIST(LightningModule):
 
 # 有两种训练形式，第一种是在fit中标注出数据集
 model = LitMNIST()
-trainer = Trainer(max_epochs=10)
-trainer.fit(model, mnist_train) # 这里加上 mnist_train 这个参数
+trainer = Trainer(max_epochs=20)
+trainer.fit(model, mnist_train, mnist_val) # 这里加上 mnist_train 这个参数

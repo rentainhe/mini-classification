@@ -2,3 +2,6 @@
 /__pycache__
 /lightning_logs
 /MNIST
+/ckpts
+/data
+/example
