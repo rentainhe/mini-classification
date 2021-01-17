@@ -1,5 +1,6 @@
 import argparse, yaml
 from configs.build_config import configs
+from utils.train_engine import train_engine
 
 def parse_args():
     parser = argparse.ArgumentParser(description='MAC_Classification Args')
@@ -25,6 +26,9 @@ if __name__ == '__main__':
 
     print("Hyper parameters:")
     print(configs)
+
+    if configs.run_mode == 'train':
+        train_engine(configs)
 
     # net = resnet18()
     # get_optim(configs,net)
