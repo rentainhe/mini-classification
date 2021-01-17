@@ -25,10 +25,6 @@ if __name__ == '__main__':
     configs.path_init()
 
     print("Hyper parameters:")
-    print(configs)
-    print(configs.dataset)
-    # if configs.run_mode == 'train':
-    #     train_engine(configs)
 
-    # net = resnet18()
-    # get_optim(configs,net)
+    if configs.run_mode == 'train':
+        train_engine(configs)
