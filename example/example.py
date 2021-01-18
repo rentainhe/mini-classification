@@ -11,6 +11,8 @@ import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning.core import LightningModule
+from scheduler.scheduler import WarmupCosineSchedule
+from pytorch_lightning.callbacks import LearningRateMonitor
 
 # transforms
 # prepare transforms standard to MNIST
@@ -64,12 +66,18 @@ class ExtendMNIST(StandardMNIST,LightningModule):
         data, target = batch
         logits = self.forward(data)
         loss = F.nll_loss(logits, target)
-        labels_hat = torch.argmax(logits, dim=1)
         return {'loss': loss}
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=1e-3)
+        optimier = torch.optim.SGD(self.parameters(), lr=1e-3, momentum=0.9, weight_decay=5e-4)
+        train_sched = {
+            'scheduler': WarmupCosineSchedule(optimier, warmup_steps=1000, t_total=80000),
+            'interval': 'step',
+            'frequency': 2
+        }
+        return {'optimizer': optimier, 'lr_scheduler': train_sched}
 
 model = ExtendMNIST()
-trainer = Trainer(accumulate_grad_batches=2)
+lr_monitor = LearningRateMonitor(logging_interval='step')
+trainer = Trainer(max_steps=80000, callbacks=[lr_monitor])
 trainer.fit(model, mnist_train)

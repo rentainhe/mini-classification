@@ -1,7 +1,8 @@
 # pytorch-lightning
-Learning how to use [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning)
+A simple `classification` project based on [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning)
 
 ## Content
-- pytorch transforms into pytorch-lightning
+- control the training through [one config file](https://github.com/rentainhe/mini-classification/blob/master/configs/cifar100.yaml)
+- pytorch-lightning [notes]() sharing
 
 ## Reference
