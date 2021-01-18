@@ -11,7 +11,7 @@ from models.get_network import get_network
 from optim.get_optim import get_optim
 from dataloader.get_dataloader import get_train_loader, get_test_loader
 from scheduler.get_scheduler import get_scheduler
-from pytorch_lightning.callbacks import *
+from pytorch_lightning.callbacks import LearningRateMonitor
 
 
 def train_engine(__C):
@@ -60,5 +60,8 @@ def train_engine(__C):
     Lightning_Training = Lightning_Training_module(__C)
 
     # define Trainer
-    trainer = Trainer(max_steps=__C.training['total_steps'], gpus=__C.n_gpu, callbacks=[lr_monitor])
+    trainer = Trainer(max_steps=__C.training['total_steps'],
+                      gpus=__C.n_gpu,
+                      callbacks=[lr_monitor],
+                      precision=__C.training['precision'])
     trainer.fit(Lightning_Training, train_loader, test_loader)

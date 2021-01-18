@@ -47,15 +47,14 @@ transforms:
 training:
     warmup_steps: 1000
     total_steps: 80000
-    eval_steps: 250
+    eval_every_epoch: True
     save_steps: 500
     lr_scheduler: 'Cosine'
+    precision: 16
     label_smoothing:
         enable: 0
         smoothing: 0.1
     no_bias_decay:
-        enable: 0
-    mixed_precision_training:
         enable: 0
     distributed_training:
         enable: 0
