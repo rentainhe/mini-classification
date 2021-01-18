@@ -17,11 +17,12 @@ from pytorch_lightning.callbacks import LearningRateMonitor
 def train_engine(__C):
     # define training loop in LightningModule
 
-    class Lightning_Training_module(LightningModule):
-        def __init__(self, __C):
+    class Lightning_Training(LightningModule):
+        def __init__(self, config, params):
             super().__init__()
-            self.__C = __C
-            self.net = get_network(__C)
+            self.__C = config
+            self.save_hyperparameters(params)
+            self.net = get_network(config)
 
         def forward(self, x):
             x = self.net(x)
@@ -57,11 +58,13 @@ def train_engine(__C):
     # define callbacks
     lr_monitor = LearningRateMonitor(logging_interval='step')
 
-    Lightning_Training = Lightning_Training_module(__C)
+    Lightning_Training = Lightning_Training(__C,
+                                            __C.__dict__)
 
     # define Trainer
     trainer = Trainer(max_steps=__C.training['total_steps'],
                       gpus=__C.n_gpu,
                       callbacks=[lr_monitor],
                       precision=__C.training['precision'])
+
     trainer.fit(Lightning_Training, train_loader, test_loader)
