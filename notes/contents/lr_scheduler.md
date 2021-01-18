@@ -2,7 +2,7 @@
 ### define it in `LightningModule.configure_optimizers()`
 
 #### return options
-#### 1. Single optimizer
+#### 1. single optimizer
 ```python
 class example(LightningModule):
     ...
@@ -11,7 +11,7 @@ class example(LightningModule):
         return optimizer
 ```
 
-#### 2. Dictionary with `'optimizer'` key and `'lr_scheduler'` key
+#### 2. dictionary with `'optimizer'` key and `'lr_scheduler'` key
 Use `WarmupCosineSchedule` as an example
 ```python
 class example(LightningModule):
@@ -32,5 +32,14 @@ use `lr_dict` to define scheduler
   - `epoch`: do `scheduler.step()` after each `epoch`
 - `frequency`: default 1, set `frequency:2` do `scheduler.step()` after each `2` (epoch/step)
 
+#### 3. monitor the learning rate
+define a `LearningRateMonitor`
+```python
+from pytorch_lightning.callbacks import LearningRateMonitor
+lr_monitor = LearningRateMonitor(logging_interval='step') # update the log file at each step
+trainer = Trainer(..., callbacks[lr_monitor])
+trainer.fit()
+```
+
 ## Reference
-- [Docs](https://pytorch-lightning.readthedocs.io/en/latest/lightning_module.html?highlight=schedule#configure-optimizers)
+If you want to know more details, please see the [Docs](https://pytorch-lightning.readthedocs.io/en/latest/lightning_module.html?highlight=schedule#configure-optimizers)

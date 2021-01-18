@@ -4,16 +4,14 @@ import torch
 import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, random_split
-from torchvision.datasets import MNIST
-from torchvision import datasets, transforms
 from pytorch_lightning import Trainer
 from pytorch_lightning.core.lightning import LightningModule
 import pytorch_lightning as pl
 from models.get_network import get_network
 from optim.get_optim import get_optim
 from dataloader.get_dataloader import get_train_loader, get_test_loader
-from torchvision.models import resnet18
+from scheduler.get_scheduler import get_scheduler
+from pytorch_lightning.callbacks import *
 
 
 def train_engine(__C):
@@ -33,18 +31,34 @@ def train_engine(__C):
             images, labels = batch
             preds = self.forward(images)
             loss = F.cross_entropy(preds, labels)
+            self.log('loss', loss)
             return {'loss': loss}
+
+        def validation_step(self, batch, batch_idx):
+            images, labels = batch
+            preds = self(images)
+            loss = F.cross_entropy(preds, labels)
+            labels_hat = torch.argmax(preds, dim=1)
+            test_acc = torch.sum(labels == labels_hat).item() / (len(labels) * 1.0)
+            self.log_dict({'test_loss': loss, 'test_acc': test_acc}, on_epoch=True)
 
         def configure_optimizers(self):
             optimizer = get_optim(self.__C, self.parameters())
-            return optimizer
+            scheduler = {
+                'scheduler': get_scheduler(self.__C, optimizer),
+                'interval': 'step',
+            }
+            return {'optimizer': optimizer, 'lr_scheduler': scheduler}
 
     # define trainloader and testloader
     train_loader = get_train_loader(__C)
     test_loader = get_test_loader(__C)
 
+    # define callbacks
+    lr_monitor = LearningRateMonitor(logging_interval='step')
+
     Lightning_Training = Lightning_Training_module(__C)
-    trainer = Trainer(max_epochs=5, gpus=1)
-    trainer.fit(Lightning_Training, train_loader)
 
-
+    # define Trainer
+    trainer = Trainer(max_steps=__C.training['total_steps'], gpus=__C.n_gpu, callbacks=[lr_monitor])
+    trainer.fit(Lightning_Training, train_loader, test_loader)
