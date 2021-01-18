@@ -55,14 +55,10 @@ class StandardMNIST(nn.Module):
 
 # extend StandardMNIST and LightningModule at the same time
 # this is what I like from python, extend two class at the same time
-class ExtendMNIST(LightningModule):
+class ExtendMNIST(StandardMNIST,LightningModule):
     def __init__(self, __C=None):
         super().__init__()
-        self.net = resnet18()
 
-    def forward(self, x):
-        x = self.net(x)
-        return x
 
     def training_step(self, batch, batch_idx):
         data, target = batch
@@ -75,5 +71,5 @@ class ExtendMNIST(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=1e-3)
 
 model = ExtendMNIST()
-trainer = Trainer(max_epochs=5)
+trainer = Trainer(accumulate_grad_batches=2)
 trainer.fit(model, mnist_train)
