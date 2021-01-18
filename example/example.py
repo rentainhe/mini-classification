@@ -10,6 +10,7 @@ from torchvision import datasets, transforms
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.core.lightning import LightningModule
+from pytorch_lightning.core import LightningModule
 
 # transforms
 # prepare transforms standard to MNIST
@@ -21,7 +22,10 @@ mnist_train = DataLoader(mnist_train, batch_size=64)
 mnist_val = MNIST(os.getcwd(), train=False, download=True, transform=transform)
 mnist_val = DataLoader(mnist_val, batch_size=64)
 
+from models.net.resnet import BasicBlock
+from models.net.resnet import resnet18
 
+net = resnet18()
 # build your model
 class StandardMNIST(nn.Module):
     def __init__(self):
@@ -51,9 +55,14 @@ class StandardMNIST(nn.Module):
 
 # extend StandardMNIST and LightningModule at the same time
 # this is what I like from python, extend two class at the same time
-class ExtendMNIST(StandardMNIST, LightningModule):
-    def __init__(self):
+class ExtendMNIST(LightningModule):
+    def __init__(self, __C=None):
         super().__init__()
+        self.net = resnet18()
+
+    def forward(self, x):
+        x = self.net(x)
+        return x
 
     def training_step(self, batch, batch_idx):
         data, target = batch

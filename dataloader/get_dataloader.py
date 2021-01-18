@@ -13,7 +13,7 @@ def get_train_loader(__C):
                                     train=True,
                                     download=True,
                                     transform=train_transform)
-    elif __C.dataset == "cifar100":
+    elif __C.dataset['name'] == "cifar100":
         trainset = datasets.CIFAR100(root=__C.dataset['dir'],
                                     train=True,
                                     download=True,
@@ -34,12 +34,12 @@ def get_test_loader(__C):
     train_transform, test_transform = get_transforms(__C)
 
     # get dataset
-    if __C.dataset == "cifar10":
+    if __C.dataset['name'] == "cifar10":
         testset = datasets.CIFAR10(root=__C.dataset['dir'],
                                     train=False,
                                     download=True,
                                     transform=test_transform)
-    elif __C.dataset == "cifar100":
+    elif __C.dataset['name'] == "cifar100":
         testset = datasets.CIFAR100(root=__C.dataset['dir'],
                                     train=False,
                                     download=True,

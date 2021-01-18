@@ -23,7 +23,6 @@ def get_transform_block(method, args):
         eval_str = ''
         for key in keys:
             eval_str += key + '=' + str(args[key]) + ', '
-        print(eval_str)
         trans = eval(method + '(' + eval_str + ')')
         return [trans]
     else:
