@@ -49,7 +49,7 @@ training:
     total_steps: 80000
     eval_every_epoch: True
     save_checkpoint: True
-        save_steps: 500
+    save_steps: 500
     lr_scheduler: 'Cosine'
     precision: 16
     label_smoothing:
@@ -60,7 +60,6 @@ training:
     distributed_training:
         enable: 0
         world_size: 4
-    resume_from_checkpoint: None
 
 optim:
     name: 'SGD'
