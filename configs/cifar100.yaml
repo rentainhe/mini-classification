@@ -46,6 +46,7 @@ transforms:
 
 training:
     warmup_steps: 1000
+    max_steps: 80000
     eval_every_epoch: True
     save_checkpoint: True
     save_steps: 500
@@ -58,9 +59,6 @@ training:
     distributed_training:
         enable: 0
         world_size: 4
-
-Trainer:
-    max_steps: 80000
     precision: 16
     resume_from_checkpoint: None
     val_check_interval: 250
