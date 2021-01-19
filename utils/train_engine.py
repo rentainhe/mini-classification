@@ -64,10 +64,11 @@ def train_engine(__C):
                                             __C.__dict__)
 
     # define Trainer
-    trainer = Trainer(max_steps=__C.training['total_steps'],
+    trainer = Trainer(max_steps=__C.Trainer['max_steps'],
                       gpus=__C.n_gpu,
                       callbacks=[lr_monitor, save_checkpoint_monitor],
-                      precision=__C.training['precision'],
-                      resume_from_checkpoint=__C.training['resume_from_checkpoint'])
+                      precision=__C.Trainer['precision'],
+                      resume_from_checkpoint=__C.Trainer['resume_from_checkpoint'],
+                      auto_select_gpus=__C.Trainer['auto_select_gpus'])
 
     trainer.fit(Lightning_Training, train_loader, test_loader)

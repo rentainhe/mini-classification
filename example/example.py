@@ -70,6 +70,9 @@ class ExtendMNIST(StandardMNIST,LightningModule):
         loss = F.nll_loss(logits, target)
         return {'loss': loss}
 
+    def validation_step(self, batch, batch_idx):
+        print("validation")
+
     def configure_optimizers(self):
         optimier = torch.optim.SGD(self.parameters(), lr=1e-3, momentum=0.9, weight_decay=5e-4)
         train_sched = {
@@ -81,7 +84,6 @@ class ExtendMNIST(StandardMNIST,LightningModule):
 
 model = ExtendMNIST()
 lr_monitor = LearningRateMonitor(logging_interval='step')
-checkpoint_callback = ModelCheckpoint(monitor='step', period=2)
 
-trainer = Trainer(max_steps=90000, callbacks=[lr_monitor, checkpoint_callback])
-trainer.fit(model, mnist_train)
+trainer = Trainer(max_steps=90000, callbacks=[lr_monitor],val_check_interval=100)
+trainer.fit(model, mnist_train, mnist_val)
