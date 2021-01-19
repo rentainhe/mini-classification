@@ -64,6 +64,10 @@ training:
     val_check_interval: 250
     auto_select_gpus: False
 
+accelerator:
+    gpus: [0,2]
+    mode: 'dp'
+    num_nodes: 1
 
 optim:
     name: 'SGD'
