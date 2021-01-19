@@ -12,16 +12,17 @@ from optim.get_optim import get_optim
 from dataloader.get_dataloader import get_train_loader, get_test_loader
 from scheduler.get_scheduler import get_scheduler
 from pytorch_lightning.callbacks import LearningRateMonitor
+from utils.callbacks import save_monitor
 
 
 def train_engine(__C):
     # define training loop in LightningModule
 
     class Lightning_Training(LightningModule):
-        def __init__(self, config, params):
+        def __init__(self, config, hparams):
             super().__init__()
             self.__C = config
-            self.save_hyperparameters(params)
+            self.save_hyperparameters(hparams)
             self.net = get_network(config)
 
         def forward(self, x):
@@ -57,6 +58,7 @@ def train_engine(__C):
 
     # define callbacks
     lr_monitor = LearningRateMonitor(logging_interval='step')
+    save_checkpoint_monitor = save_monitor(__C)
 
     Lightning_Training = Lightning_Training(__C,
                                             __C.__dict__)
@@ -64,7 +66,8 @@ def train_engine(__C):
     # define Trainer
     trainer = Trainer(max_steps=__C.training['total_steps'],
                       gpus=__C.n_gpu,
-                      callbacks=[lr_monitor],
-                      precision=__C.training['precision'])
+                      callbacks=[lr_monitor, save_checkpoint_monitor],
+                      precision=__C.training['precision'],
+                      resume_from_checkpoint=__C.training['resume_from_checkpoint'])
 
     trainer.fit(Lightning_Training, train_loader, test_loader)

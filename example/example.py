@@ -13,6 +13,8 @@ from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning.core import LightningModule
 from scheduler.scheduler import WarmupCosineSchedule
 from pytorch_lightning.callbacks import LearningRateMonitor
+from pytorch_lightning.callbacks import ModelCheckpoint
+from PIL import Image
 
 # transforms
 # prepare transforms standard to MNIST
@@ -79,5 +81,7 @@ class ExtendMNIST(StandardMNIST,LightningModule):
 
 model = ExtendMNIST()
 lr_monitor = LearningRateMonitor(logging_interval='step')
-trainer = Trainer(max_steps=80000, callbacks=[lr_monitor])
+checkpoint_callback = ModelCheckpoint(monitor='step', period=2)
+
+trainer = Trainer(max_steps=90000, callbacks=[lr_monitor, checkpoint_callback])
 trainer.fit(model, mnist_train)

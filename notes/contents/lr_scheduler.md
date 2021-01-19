@@ -1,4 +1,4 @@
-## Scheduler
+## scheduler
 ### define it in `LightningModule.configure_optimizers()`
 
 #### return options
@@ -18,12 +18,12 @@ class example(LightningModule):
     ...
     def configure_optimizers(self):
         optimier = torch.optim.SGD(self.parameters(), lr=1e-3, momentum=0.9, weight_decay=5e-4)
-        train_sched = {
+        train_scheduler = {
             'scheduler': WarmupCosineSchedule(optimier, warmup_steps=1000, t_total=80000),
             'interval': 'step',
             'frequency': 1
         }
-        return {'optimizer':optimier, 'lr_scheduler':train_sched}
+        return {'optimizer':optimier, 'lr_scheduler':train_scheduler}
 ```
 use `lr_dict` to define scheduler
 - `scheduler`: lr_schedule
