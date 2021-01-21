@@ -15,7 +15,6 @@ from pytorch_lightning.callbacks import LearningRateMonitor
 from utils.callbacks import save_monitor
 from utils.check_config import check_config
 
-
 def train_engine(__C):
     # check if there are anything wrong in the configs
     check_config(__C)
@@ -37,7 +36,7 @@ def train_engine(__C):
             preds = self.forward(images)
             loss = F.cross_entropy(preds, labels)
             self.log('loss', loss)
-            return {'loss': loss}
+            return loss
 
         def validation_step(self, batch, batch_idx):
             images, labels = batch
@@ -69,6 +68,7 @@ def train_engine(__C):
     # define Trainer
     trainer = Trainer(max_steps=__C.training['max_steps'],
                       gpus=__C.accelerator['gpus'],
+                      accumulate_grad_batches= __C.training['gradient_accumulation_steps'],
                       callbacks=[lr_monitor, save_checkpoint_monitor],
                       precision=__C.training['precision'],
                       resume_from_checkpoint=__C.training['resume_from_checkpoint'],

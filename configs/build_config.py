@@ -25,8 +25,8 @@ class Settings:
             setattr(self, arg, args_dict[arg])
 
     def training_init(self):
-        os.environ['CUDA_VISIBLE_DEVICES'] = self.gpu
-        self.n_gpu = len(self.gpu.split(','))
+        # os.environ['CUDA_VISIBLE_DEVICES'] = self.accelerator['gpus']
+        self.n_gpu = len(self.accelerator['gpus'].split(','))
         self.devices = [ _ for _ in range(self.n_gpu) ]
         torch.set_num_threads(2)
 

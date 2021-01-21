@@ -63,9 +63,10 @@ training:
     resume_from_checkpoint: None
     val_check_interval: 250
     auto_select_gpus: False
+    gradient_accumulation_steps: 1
 
 accelerator:
-    gpus: [0,2]
+    gpus: "0,1"
     mode: 'dp'
     num_nodes: 1
 

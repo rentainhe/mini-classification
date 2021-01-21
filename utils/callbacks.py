@@ -14,4 +14,3 @@ class save_monitor(Callback):
             if trainer.global_step % self.__C.training['save_steps'] == 0:
                 file_name = self.save_path + '/' + str(trainer.global_step) + '.ckpt'
                 trainer.save_checkpoint(file_name)
-
