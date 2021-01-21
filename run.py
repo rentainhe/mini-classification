@@ -3,7 +3,7 @@ from configs.build_config import configs
 from utils.train_engine import train_engine
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='MAC_Classification Args')
+    parser = argparse.ArgumentParser(description='mini-classification args')
     parser.add_argument('--config', type=str, choices=['cifar10','cifar100','imagenet'], required=True, help='choose the dataset')
     parser.add_argument('--gpu', type=str, help="gpu choose, eg. '0,1,2,...' ")
     parser.add_argument('--run', dest="run_mode", type=str, choices=['train','test'])

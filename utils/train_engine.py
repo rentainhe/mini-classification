@@ -13,6 +13,7 @@ from dataloader.get_dataloader import get_train_loader, get_test_loader
 from scheduler.get_scheduler import get_scheduler
 from pytorch_lightning.callbacks import LearningRateMonitor
 from utils.callbacks import save_monitor
+from utils.callbacks import interval_validation
 from utils.check_config import check_config
 
 def train_engine(__C):
@@ -61,6 +62,7 @@ def train_engine(__C):
     # define callbacks
     lr_monitor = LearningRateMonitor(logging_interval='step')
     save_checkpoint_monitor = save_monitor(__C)
+    validation_monitor = interval_validation(__C)
 
     Lightning_Training = Lightning_Training(__C,
                                             __C.__dict__)
@@ -69,7 +71,7 @@ def train_engine(__C):
     trainer = Trainer(max_steps=__C.training['max_steps'],
                       gpus=__C.accelerator['gpus'],
                       accumulate_grad_batches= __C.training['gradient_accumulation_steps'],
-                      callbacks=[lr_monitor, save_checkpoint_monitor],
+                      callbacks=[lr_monitor, save_checkpoint_monitor, validation_monitor],
                       precision=__C.training['precision'],
                       resume_from_checkpoint=__C.training['resume_from_checkpoint'],
                       auto_select_gpus=__C.training['auto_select_gpus'],
