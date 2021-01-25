@@ -42,7 +42,7 @@ class SEResNeXtBottleneck(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.se_module = SEModule(planes * 4, reduction=reduction)
         self.stride = stride
-
+        self.shortcut = nn.Sequential()
         if stride != 1 or inplanes != planes * self.expansion:
             self.shortcut = nn.Sequential(
                 nn.Conv2d(inplanes, planes * self.expansion, 1, stride=stride),
@@ -107,11 +107,11 @@ class SEResNext(nn.Module):
     def _make_stage(self, block, num, out_channels, stride, groups, reduction):
 
         layers = []
-        layers.append(block(self.in_channels, out_channels, stride, groups=groups, reduction=reduction))
+        layers.append(block(self.in_channels, out_channels, stride=stride, groups=groups, reduction=reduction))
         self.in_channels = out_channels * block.expansion
 
         while num - 1:
-            layers.append(block(self.in_channels, out_channels, 1))
+            layers.append(block(self.in_channels, out_channels, stride=1, groups=groups, reduction=reduction))
             num -= 1
 
         return nn.Sequential(*layers)
