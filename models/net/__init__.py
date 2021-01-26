@@ -7,3 +7,4 @@ from models.net.ghostnet import ghostnet
 from models.net.densenet import *
 from models.net.resnext import *
 from models.net.lambdanetwork import *
+from models.net.resnext import *

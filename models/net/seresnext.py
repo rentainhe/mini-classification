@@ -70,7 +70,7 @@ class SEResNeXtBottleneck(nn.Module):
 
 class SEResNext(nn.Module):
 
-    def __init__(self, block, block_num, groups=32, reduction=16, class_num=100):
+    def __init__(self, block, block_num, groups=32, base_width=4,reduction=16, class_num=100):
         super().__init__()
 
         self.in_channels = 64
@@ -81,10 +81,10 @@ class SEResNext(nn.Module):
             nn.ReLU(inplace=True)
         )
 
-        self.stage1 = self._make_stage(block, block_num[0], 64, 1, groups, reduction)
-        self.stage2 = self._make_stage(block, block_num[1], 128, 2, groups, reduction)
-        self.stage3 = self._make_stage(block, block_num[2], 256, 2, groups, reduction)
-        self.stage4 = self._make_stage(block, block_num[3], 512, 2, groups, reduction)
+        self.stage1 = self._make_stage(block, block_num[0], 64, 1, groups, reduction, base_width)
+        self.stage2 = self._make_stage(block, block_num[1], 128, 2, groups, reduction, base_width)
+        self.stage3 = self._make_stage(block, block_num[2], 256, 2, groups, reduction, base_width)
+        self.stage4 = self._make_stage(block, block_num[3], 512, 2, groups, reduction, base_width)
 
         self.linear = nn.Linear(self.in_channels, class_num)
 
@@ -104,24 +104,24 @@ class SEResNext(nn.Module):
         return x
 
 
-    def _make_stage(self, block, num, out_channels, stride, groups, reduction):
+    def _make_stage(self, block, num, out_channels, stride, groups, reduction, base_width):
 
         layers = []
-        layers.append(block(self.in_channels, out_channels, stride=stride, groups=groups, reduction=reduction))
+        layers.append(block(self.in_channels, out_channels, stride=stride, groups=groups, reduction=reduction, base_width=base_width))
         self.in_channels = out_channels * block.expansion
 
         while num - 1:
-            layers.append(block(self.in_channels, out_channels, stride=1, groups=groups, reduction=reduction))
+            layers.append(block(self.in_channels, out_channels, stride=1, groups=groups, reduction=reduction, base_width=base_width))
             num -= 1
 
         return nn.Sequential(*layers)
 
 
-def seresnext26():
+def seresnext26_32x4d():
     return SEResNext(SEResNeXtBottleneck, [2, 2, 2, 2], groups=32, reduction=16)
 
-def seresnext50():
+def seresnext50_32x4d():
     return SEResNext(SEResNeXtBottleneck, [3, 4, 6, 3], groups=32, reduction=16)
 
-def seresnext101():
+def seresnext101_32x4d():
     return SEResNext(SEResNeXtBottleneck, [3, 4, 23, 3], groups=32, reduction=16)

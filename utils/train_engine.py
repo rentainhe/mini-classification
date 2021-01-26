@@ -15,6 +15,8 @@ from pytorch_lightning.callbacks import LearningRateMonitor
 from utils.callbacks import save_monitor
 from utils.callbacks import interval_validation
 from utils.check_config import check_config
+from pytorch_lightning.callbacks import ModelCheckpoint
+import os
 
 def train_engine(__C):
     # check if there are anything wrong in the configs
@@ -61,6 +63,8 @@ def train_engine(__C):
 
     # define callbacks
     lr_monitor = LearningRateMonitor(logging_interval='step')
+    dir_path = os.path.join('ckpts',__C.version)
+    checkpoint_monitor = ModelCheckpoint(dirpath=dir_path, filename=str(__C.version), monitor='test_acc', save_top_k=1, save_last=True)
     save_checkpoint_monitor = save_monitor(__C)
     validation_monitor = interval_validation(__C)
 
@@ -71,7 +75,7 @@ def train_engine(__C):
     trainer = Trainer(max_steps=__C.training['max_steps'],
                       gpus=__C.accelerator['gpus'],
                       accumulate_grad_batches= __C.training['gradient_accumulation_steps'],
-                      callbacks=[lr_monitor, save_checkpoint_monitor, validation_monitor],
+                      callbacks=[lr_monitor, validation_monitor, checkpoint_monitor],
                       precision=__C.training['precision'],
                       resume_from_checkpoint=__C.training['resume_from_checkpoint'],
                       auto_select_gpus=__C.training['auto_select_gpus'],

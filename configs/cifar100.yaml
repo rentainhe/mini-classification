@@ -65,6 +65,16 @@ training:
     auto_select_gpus: False
     gradient_accumulation_steps: 1
 
+callbacks:
+    LearningRateMonitor:
+        logging_interval: 'step'
+    ModelCheckpoint:
+        dirpath: './ckpts'
+        monitor: 'test_loss'
+        save_top_k: 1
+        mode: 'max'
+
+
 accelerator:
     gpus: "0,1"
     mode: 'dp'
