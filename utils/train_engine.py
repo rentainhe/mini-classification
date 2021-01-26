@@ -41,13 +41,28 @@ def train_engine(__C):
             self.log('loss', loss)
             return loss
 
+        # def validation_step(self, batch, batch_idx):
+        #     images, labels = batch
+        #     preds = self(images)
+        #     loss = F.cross_entropy(preds, labels)
+        #     labels_hat = torch.argmax(preds, dim=1)
+        #     top_1_acc = torch.sum(labels == labels_hat).item() / (len(labels) * 1.0)
+        #     self.log_dict({'test_loss': loss, 'top-1': top_1_acc, 'top-5':}, on_epoch=True)
+
         def validation_step(self, batch, batch_idx):
             images, labels = batch
-            preds = self(images)
-            loss = F.cross_entropy(preds, labels)
-            labels_hat = torch.argmax(preds, dim=1)
-            test_acc = torch.sum(labels == labels_hat).item() / (len(labels) * 1.0)
-            self.log_dict({'test_loss': loss, 'test_acc': test_acc}, on_epoch=True)
+            test_outputs = self(images)
+            loss = F.cross_entropy(test_outputs, labels)
+            _, pred = test_outputs.topk(5, 1, largest=True, sorted=True)
+            labels = labels.view(labels.size(0), -1).expand_as(pred)
+            correct = pred.eq(labels).float()
+
+            # top-5
+            correct_5 = correct[:, :5].sum()
+
+            # top-1
+            correct_1 = correct[:, :1].sum()
+            self.log_dict({'test_loss': loss, 'top-1': correct_1, 'top-5':correct_5}, on_epoch=True)
 
         def configure_optimizers(self):
             optimizer = get_optim(self.__C, self.parameters())
