@@ -15,6 +15,7 @@ from scheduler.scheduler import WarmupCosineSchedule
 from pytorch_lightning.callbacks import LearningRateMonitor
 from pytorch_lightning.callbacks import ModelCheckpoint
 from PIL import Image
+from pytorch_lightning import loggers as pl_loggers
 
 # transforms
 # prepare transforms standard to MNIST
@@ -70,8 +71,8 @@ class ExtendMNIST(StandardMNIST,LightningModule):
         loss = F.nll_loss(logits, target)
         return {'loss': loss}
 
-    def validation_step(self, batch, batch_idx):
-        print("validation")
+    # def validation_step(self, batch, batch_idx):
+    #     print("validation")
 
     def configure_optimizers(self):
         optimier = torch.optim.SGD(self.parameters(), lr=1e-3, momentum=0.9, weight_decay=5e-4)
@@ -85,5 +86,7 @@ class ExtendMNIST(StandardMNIST,LightningModule):
 model = ExtendMNIST()
 lr_monitor = LearningRateMonitor(logging_interval='step')
 
-trainer = Trainer(max_steps=90000, callbacks=[lr_monitor],val_check_interval=100)
+tb_logger = pl_loggers.TensorBoardLogger(save_dir='logs/', name='test',version='test')
+
+trainer = Trainer(max_steps=90000, callbacks=[lr_monitor], logger=tb_logger)
 trainer.fit(model, mnist_train, mnist_val)

@@ -9,6 +9,7 @@ from scheduler.get_scheduler import get_scheduler
 from callbacks.callbacks import save_monitor
 from callbacks.callbacks import interval_validation
 from callbacks.get_callbacks import get_callbacks, get_callbacks_list
+from pytorch_lightning import loggers as pl_loggers
 
 
 def train_engine(__C):
@@ -75,9 +76,12 @@ def train_engine(__C):
 
     # get callback list
     callbacks = get_callbacks_list(__C)
+    # define logger
+    tb_logger = pl_loggers.TensorBoardLogger(name=__C.model, version=__C.name)
+
+    # init training class
     Lightning_Training = Lightning_Training(__C,
                                             __C.__dict__)
-
     # define Trainer
     trainer = Trainer(max_steps=__C.training['max_steps'],
                       gpus=__C.accelerator['gpus'],
@@ -87,6 +91,7 @@ def train_engine(__C):
                       resume_from_checkpoint=__C.training['resume_from_checkpoint'],
                       auto_select_gpus=__C.training['auto_select_gpus'],
                       val_check_interval=__C.training['val_check_interval'],
-                      accelerator=__C.accelerator['mode'])
+                      accelerator=__C.accelerator['mode'],
+                      logger=[tb_logger])
 
     trainer.fit(Lightning_Training, train_loader, test_loader)
