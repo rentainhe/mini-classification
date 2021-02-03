@@ -44,6 +44,8 @@ transforms:
                 enable: 1
                 size: (32, 32)
 
+debug: True
+
 training:
     warmup_steps: 1000
     max_steps: 80000

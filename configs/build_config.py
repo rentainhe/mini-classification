@@ -4,7 +4,8 @@ import torch
 import numpy as np
 import random
 from datetime import datetime
-
+import logging
+logger = logging.getLogger(__name__)
 
 class Settings:
     def __init__(self):
@@ -58,6 +59,8 @@ class Settings:
             'max_steps'], "warmup-steps should be smaller than max-steps"
         assert self.training['lr_scheduler'] in ['Cosine', 'Linear',
                                                  'Multistep'], "now only support cosine/linear/multistep learning scheduler"
+        if self.debug:
+            logger.warning("You are using debug mode, if you want full training, you should set debug to False")
 
     def __str__(self):
         # print Hyper Parameters

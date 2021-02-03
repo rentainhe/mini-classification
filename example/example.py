@@ -88,5 +88,5 @@ lr_monitor = LearningRateMonitor(logging_interval='step')
 
 tb_logger = pl_loggers.TensorBoardLogger(save_dir='logs/', name='test',version='test')
 
-trainer = Trainer(max_steps=90000, callbacks=[lr_monitor], logger=tb_logger)
+trainer = Trainer(max_steps=90000, callbacks=[lr_monitor], logger=tb_logger, fast_dev_run=True)
 trainer.fit(model, mnist_train, mnist_val)

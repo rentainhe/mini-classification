@@ -92,6 +92,7 @@ def train_engine(__C):
                       auto_select_gpus=__C.training['auto_select_gpus'],
                       val_check_interval=__C.training['val_check_interval'],
                       accelerator=__C.accelerator['mode'],
-                      logger=[tb_logger])
+                      logger=[tb_logger],
+                      fast_dev_run=__C.debug)
 
     trainer.fit(Lightning_Training, train_loader, test_loader)
