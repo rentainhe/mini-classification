@@ -23,6 +23,7 @@ class Settings:
     def add_args(self, args_dict):
         for arg in args_dict:
             setattr(self, arg, args_dict[arg])
+        self.config_check()
 
     def training_init(self):
         # os.environ['CUDA_VISIBLE_DEVICES'] = self.accelerator['gpus']
@@ -50,6 +51,10 @@ class Settings:
         for name,dir in save_dir.items():
             if str(dir) not in os.listdir('./'):
                 os.makedirs(str(dir))
+
+    def config_check(self):
+        assert self.training['warmup_steps'] < self.training['max_steps'], "warmup-steps should be smaller than max-steps"
+        assert self.training['lr_scheduler'] in ['Cosine', 'Linear', 'Multistep'], "now only support cosine/linear/multistep learning scheduler"
 
     def __str__(self):
         # print Hyper Parameters

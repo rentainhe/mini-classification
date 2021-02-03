@@ -69,8 +69,8 @@ callbacks:
     LearningRateMonitor:
         logging_interval: 'step'
     ModelCheckpoint:
-        dirpath: './ckpts'
-        monitor: 'test_loss'
+        filename: 'best_acc'
+        monitor: 'test_acc'
         save_top_k: 1
         mode: 'max'
 

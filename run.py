@@ -8,6 +8,7 @@ def parse_args():
     parser.add_argument('--gpu', type=str, help="gpu choose, eg. '0,1,2,...' ")
     parser.add_argument('--run', dest="run_mode", type=str, choices=['train','test'])
     parser.add_argument('--seed', type=int, help='fix random seed')
+    parser.add_argument('--name', type=str, default='test', required=True, help='name of this training')
     args = parser.parse_args()
     return args
 

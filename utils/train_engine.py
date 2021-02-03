@@ -1,26 +1,19 @@
 # import all you need
-import os
-import torch
-import torchvision
-import torch.nn as nn
 import torch.nn.functional as F
 from pytorch_lightning import Trainer
 from pytorch_lightning.core.lightning import LightningModule
-import pytorch_lightning as pl
 from models.get_network import get_network
 from optim.get_optim import get_optim
 from dataloader.get_dataloader import get_train_loader, get_test_loader
 from scheduler.get_scheduler import get_scheduler
 from pytorch_lightning.callbacks import LearningRateMonitor
-from utils.callbacks import save_monitor
-from utils.callbacks import interval_validation
-from utils.check_config import check_config
+from callbacks.callbacks import save_monitor
+from callbacks.callbacks import interval_validation
 from pytorch_lightning.callbacks import ModelCheckpoint
 import os
+from callbacks.get_callbacks import get_callbacks, get_callbacks_list
 
 def train_engine(__C):
-    # check if there are anything wrong in the configs
-    check_config(__C)
 
     # define training loop in LightningModule
     class Lightning_Training(LightningModule):
@@ -77,12 +70,14 @@ def train_engine(__C):
     test_loader = get_test_loader(__C)
 
     # define callbacks
-    lr_monitor = LearningRateMonitor(logging_interval='step')
-    dir_path = os.path.join('ckpts',__C.version)
-    checkpoint_monitor = ModelCheckpoint(dirpath=dir_path, filename=str(__C.version), monitor='test_acc', save_top_k=1, save_last=True)
-    save_checkpoint_monitor = save_monitor(__C)
-    validation_monitor = interval_validation(__C)
+    # lr_monitor = LearningRateMonitor(logging_interval='step')
+    # dir_path = os.path.join('ckpts',__C.name)
+    # checkpoint_monitor = ModelCheckpoint(dirpath=dir_path, filename=str(__C.version), monitor='test_acc', save_top_k=1, save_last=True)
+    # save_checkpoint_monitor = save_monitor(__C)
+    # validation_monitor = interval_validation(__C)
 
+    # get callback list
+    callbacks = get_callbacks_list(__C)
     Lightning_Training = Lightning_Training(__C,
                                             __C.__dict__)
 
@@ -90,7 +85,7 @@ def train_engine(__C):
     trainer = Trainer(max_steps=__C.training['max_steps'],
                       gpus=__C.accelerator['gpus'],
                       accumulate_grad_batches= __C.training['gradient_accumulation_steps'],
-                      callbacks=[lr_monitor, validation_monitor, checkpoint_monitor],
+                      callbacks=callbacks,
                       precision=__C.training['precision'],
                       resume_from_checkpoint=__C.training['resume_from_checkpoint'],
                       auto_select_gpus=__C.training['auto_select_gpus'],
