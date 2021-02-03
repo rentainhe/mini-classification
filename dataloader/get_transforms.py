@@ -1,5 +1,6 @@
 import torchvision.transforms as transforms
 
+
 # import argparse, yaml
 # from configs.build_config import configs
 #
@@ -45,7 +46,7 @@ def get_transforms(__C):
         test_transform_list += get_transform_block(trans, __C.transforms['img']['test'][trans])
     test_transform_list.append(transforms.ToTensor())
     test_transform_list.append(transforms.Normalize(mean=__C.transforms['tensor']['normalization']['mean'],
-                                                     std=__C.transforms['tensor']['normalization']['std']))
+                                                    std=__C.transforms['tensor']['normalization']['std']))
     test_transform = transforms.Compose(test_transform_list)
 
     return train_transform, test_transform

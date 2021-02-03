@@ -6,15 +6,12 @@ from models.get_network import get_network
 from optim.get_optim import get_optim
 from dataloader.get_dataloader import get_train_loader, get_test_loader
 from scheduler.get_scheduler import get_scheduler
-from pytorch_lightning.callbacks import LearningRateMonitor
 from callbacks.callbacks import save_monitor
 from callbacks.callbacks import interval_validation
-from pytorch_lightning.callbacks import ModelCheckpoint
-import os
 from callbacks.get_callbacks import get_callbacks, get_callbacks_list
 
-def train_engine(__C):
 
+def train_engine(__C):
     # define training loop in LightningModule
     class Lightning_Training(LightningModule):
         def __init__(self, config, hparams):
@@ -55,7 +52,7 @@ def train_engine(__C):
 
             # top-1
             correct_1 = correct[:, :1].sum()
-            self.log_dict({'test_loss': loss, 'top-1': correct_1, 'top-5':correct_5}, on_epoch=True)
+            self.log_dict({'test_loss': loss, 'top-1': correct_1, 'top-5': correct_5}, on_epoch=True)
 
         def configure_optimizers(self):
             optimizer = get_optim(self.__C, self.parameters())
@@ -84,7 +81,7 @@ def train_engine(__C):
     # define Trainer
     trainer = Trainer(max_steps=__C.training['max_steps'],
                       gpus=__C.accelerator['gpus'],
-                      accumulate_grad_batches= __C.training['gradient_accumulation_steps'],
+                      accumulate_grad_batches=__C.training['gradient_accumulation_steps'],
                       callbacks=callbacks,
                       precision=__C.training['precision'],
                       resume_from_checkpoint=__C.training['resume_from_checkpoint'],
