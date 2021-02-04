@@ -12,3 +12,4 @@ A simple `classification` project based on [pytorch-lightning](https://github.co
 $ python run.py --run train --config cifar100
 ```
 ## Reference
+- use __timm__ directory from [pytorch-image-models](https://github.com/rwightman/pytorch-image-models) for more extension, thanks a lot
