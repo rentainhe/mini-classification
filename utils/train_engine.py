@@ -6,9 +6,9 @@ from models.get_network import get_network
 from optim.get_optim import get_optim
 from dataloader.get_dataloader import get_train_loader, get_test_loader
 from scheduler.get_scheduler import get_scheduler
-from callbacks.callbacks import save_monitor
-from callbacks.callbacks import interval_validation
-from callbacks.get_callbacks import get_callbacks, get_callbacks_list
+from callbacks_old.callbacks import save_monitor
+from callbacks_old.callbacks import interval_validation
+from callbacks_old.get_callbacks import get_callbacks, get_callbacks_list
 from pytorch_lightning import loggers as pl_loggers
 
 
@@ -88,11 +88,12 @@ def train_engine(__C):
                       accumulate_grad_batches=__C.training['gradient_accumulation_steps'],
                       callbacks=callbacks,
                       precision=__C.training['precision'],
-                      resume_from_checkpoint=__C.training['resume_from_checkpoint'],
                       auto_select_gpus=__C.training['auto_select_gpus'],
                       val_check_interval=__C.training['val_check_interval'],
                       accelerator=__C.accelerator['mode'],
-                      logger=[tb_logger],
-                      fast_dev_run=__C.debug)
+                      logger=[tb_logger])
+                    #   fast_dev_run=__C.debug)
 
-    trainer.fit(Lightning_Training, train_loader, test_loader)
+    # trainer.fit(Lightning_Training, train_loader, test_loader)
+    trainer.fit(model=Lightning_Training, 
+    train_dataloader=train_loader, val_dataloaders=test_loader)

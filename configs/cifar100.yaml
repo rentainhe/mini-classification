@@ -72,7 +72,7 @@ callbacks:
         logging_interval: 'step'
     ModelCheckpoint:
         filename: 'best_acc'
-        monitor: 'test_acc'
+        monitor: 'top-1'
         save_top_k: 1
         mode: 'max'
 
