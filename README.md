@@ -1,5 +1,10 @@
-# pytorch-lightning
+# mini-classification
 A simple `classification` project based on [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning)
+
+## Installation
+```bash
+$ pip install pytorch-lightning
+```
 
 ## Content
 - control the training through [one config file](https://github.com/rentainhe/mini-classification/blob/master/configs/cifar100.yaml)
@@ -9,7 +14,5 @@ A simple `classification` project based on [pytorch-lightning](https://github.co
 ## Usage
 ### 1. training
 ```bash
-$ python run.py --run train --config cifar100
+$ python run.py --run train --config cifar100 --name test
 ```
-## Reference
-- use __timm__ directory from [pytorch-image-models](https://github.com/rwightman/pytorch-image-models) for more extension, thanks a lot

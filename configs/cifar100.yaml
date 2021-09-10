@@ -63,8 +63,8 @@ training:
         world_size: 4
     precision: 16
     resume_from_checkpoint: None
-    val_check_interval: 250
-    auto_select_gpus: False
+    val_check_interval: 250  # not add
+    auto_select_gpus: False  # not add
     gradient_accumulation_steps: 1
 
 callbacks:

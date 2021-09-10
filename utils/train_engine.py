@@ -77,7 +77,7 @@ def train_engine(__C):
     # get callback list
     callbacks = get_callbacks_list(__C)
     # define logger
-    tb_logger = pl_loggers.TensorBoardLogger(name=__C.model['name'], version=__C.name)
+    tb_logger = pl_loggers.TensorBoardLogger(name=__C.model['name'], version=__C.name, save_dir='./tensorboard')
 
     # init training class
     Lightning_Training = Lightning_Training(__C,
