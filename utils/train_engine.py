@@ -10,6 +10,7 @@ from callbacks_old.callbacks import save_monitor
 from callbacks_old.callbacks import interval_validation
 from callbacks_old.get_callbacks import get_callbacks, get_callbacks_list
 from pytorch_lightning import loggers as pl_loggers
+from callbacks import build_callbacks
 
 
 def train_engine(__C):
