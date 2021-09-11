@@ -57,7 +57,7 @@ def parse_option():
 
     return args, config
 
-def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn):
+def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn, mixup: bool):
     class Lightning_Training(LightningModule):
         def __init__(self, config):
             super().__init__()
@@ -68,6 +68,7 @@ def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn)
             self.optimizer = optimizer
             self.lr_scheduler = lr_scheduler
             self.mixup_fn = mixup_fn
+            self.mixup = mixup
 
         def forward(self, x):
             x = self.model(x)
@@ -75,10 +76,13 @@ def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn)
 
         def training_step(self, batch, batch_idx):
             samples, targets = batch
-            if self.mixup_fn is not None:
+            if self.mixup:
                 samples, targets = mixup_fn(samples, targets)
-            outputs = self.forward(samples)
-            loss = self.criterion(outputs, targets)
+                outputs = self.forward(samples)
+                loss = self.criterion(outputs, targets)
+            else:
+                outputs = self.forward(samples)
+                loss = self.criterion(outputs, targets.long())
             self.log('loss', loss)
             return loss
 
@@ -105,15 +109,20 @@ def main(config):
     optimizer = build_optimizer(config, model)
     lr_scheduler = build_scheduler(config, optimizer, len(data_loader_train))
     trainer = build_trainer(config)
+    mixup = True
     if config.AUG.MIXUP > 0.:
         # smoothing is handled with mixup label transform
         criterion = SoftTargetCrossEntropy()
     elif config.MODEL.LABEL_SMOOTHING > 0.:
+        # close mixup
+        mixup = False
         criterion = LabelSmoothingCrossEntropy(smoothing=config.MODEL.LABEL_SMOOTHING)
     else:
+        # close mixup
+        mixup = False
         criterion = torch.nn.CrossEntropyLoss()
      
-    lightning_train_engine = lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn)
+    lightning_train_engine = lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn, mixup)
     lightning_model = lightning_train_engine(config)
     trainer.fit(
         model=lightning_model, 
