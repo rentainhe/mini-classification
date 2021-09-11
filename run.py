@@ -109,14 +109,15 @@ def main(config):
     elif config.MODEL.LABEL_SMOOTHING > 0.:
         criterion = LabelSmoothingCrossEntropy(smoothing=config.MODEL.LABEL_SMOOTHING)
     else:
-        criterion = torch.nn.CrossEntropyLoss()  
-    lightning_train_engine = lightning_train_wrapper(model, criterion, optimizer, lr_scheduler)
-    lightning_model = lightning_train_engine(config)
-    trainer.fit(
-        model=lightning_model, 
-        train_dataloader=data_loader_train,
-        val_dataloaders=data_loader_val,
-    )
+        criterion = torch.nn.CrossEntropyLoss()
+    print(criterion)  
+    # lightning_train_engine = lightning_train_wrapper(model, criterion, optimizer, lr_scheduler)
+    # lightning_model = lightning_train_engine(config)
+    # trainer.fit(
+    #     model=lightning_model, 
+    #     train_dataloader=data_loader_train,
+    #     val_dataloaders=data_loader_val,
+    # )
 
 
 
