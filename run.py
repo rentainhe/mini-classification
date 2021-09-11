@@ -82,6 +82,8 @@ def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler):
         def validation_step(self, batch, batch_idx):
             images, target = batch
             output  = self(images)
+            print(output.size())
+            print(target.size())
             loss = self.criterion(output, target)
             acc1, acc5 = accuracy(output, target, topk=(1, 5))
             self.log_dict({'validation loss': loss, 'acc1': acc1, 'acc5': acc5}, on_epoch=True)
@@ -120,7 +122,4 @@ def main(config):
 
 if __name__ == '__main__':
     _, config = parse_option()
-    print("Hyper parameters:")
-    print(config)
-
     main(config)
