@@ -9,6 +9,8 @@ TRAIN:
     NAME: step
     DECAY_RATE: 0.1
     MULTISTONES: [150, 225]
+  OPTIMIZER:
+    NAME: 'sgd'
 AUG:
   MIXUP: 0.
   RANDOM_HORIZONTAL_FLOP: 0.5
