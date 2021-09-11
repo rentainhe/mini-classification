@@ -156,6 +156,8 @@ _C.TEST.CROP = True
 _C.AMP_OPT_LEVEL = ''
 # Path to output folder, overwritten by command line argument
 _C.OUTPUT = ''
+# Path to training log output folder, overwritten by comman line argument
+_C.LOG_OUTPUT = ''
 # Tag of experiment, overwritten by command line argument
 _C.TAG = 'default'
 # Frequency to save checkpoint
@@ -168,8 +170,10 @@ _C.SEED = 0
 _C.EVAL_MODE = False
 # Test throughput only, overwritten by command line argument
 _C.THROUGHPUT_MODE = False
+# Perform debug mode, quick run one step of train and val, overwritten by command line argument
+_C.DEBUG_MODE = False
 # local rank for DistributedDataParallel, given by command line argument
-_C.LOCAL_RANK = 0
+# _C.LOCAL_RANK = 0
 
 
 def _update_config_from_file(config, cfg_file):
@@ -215,10 +219,14 @@ def update_config(config, args):
         config.TRAIN.USE_CHECKPOINT = True
     if args.output:
         config.OUTPUT = args.output
+    if args.log_output:
+        config.LOG_OUTPUT = args.log_output
     if args.tag:
         config.TAG = args.tag
     if args.eval:
         config.EVAL_MODE = True
+    if args.debug:
+        config.DEBUG_MODE = True
     # if args.throughput:
     #     config.THROUGHPUT_MODE = True
 
