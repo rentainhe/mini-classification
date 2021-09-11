@@ -7,7 +7,6 @@ from data.build import build_loader
 from models.build import build_model
 from optimizer import build_optimizer
 from lr_scheduler import build_scheduler
-from callbacks import build_callbacks
 from trainer import build_trainer
 
 # pytorch-lightning
@@ -17,8 +16,8 @@ from pytorch_lightning.core.lightning import LightningModule
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from timm.utils import accuracy
 from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
+from timm.utils import accuracy
 
 def parse_option():
     parser = argparse.ArgumentParser(description='mini-classification args', add_help=False)
@@ -48,16 +47,17 @@ def parse_option():
     parser.add_argument('--gpu', type=str, help="gpu choose, eg. '0,1,2,...' ")
     parser.add_argument('--eval', action='store_true', help='Perform evaluation only')
     parser.add_argument('--debug', action='store_true', help='Perform debug only')
-    parser.add_argument('--tag', type=str, default='test', help='name of this training')
+    parser.add_argument('--tag', type=str, default='default', help='name of this training')
     parser.add_argument('--accumulation-steps', type=int, help="gradient accumulation steps")
     parser.add_argument('--precision', type=int, default=16, choices=[16, 32], help='whether to use fp16 training')
+    parser.add_argument('--accelerator', type=str, default='ddp', choices=['dp', 'ddp'], help='')
     args, unparsed = parser.parse_known_args()
 
     config = get_config(args)
 
     return args, config
 
-def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler):
+def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn):
     class Lightning_Training(LightningModule):
         def __init__(self, config):
             super().__init__()
@@ -67,25 +67,28 @@ def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler):
             self.criterion = criterion
             self.optimizer = optimizer
             self.lr_scheduler = lr_scheduler
+            self.mixup_fn = mixup_fn
 
         def forward(self, x):
             x = self.model(x)
             return x
 
         def training_step(self, batch, batch_idx):
-            images, labels = batch
-            preds = self.forward(images)
-            loss = self.criterion(preds, labels)
+            samples, targets = batch
+            if self.mixup_fn is not None:
+                samples, targets = mixup_fn(samples, targets)
+
+            outputs = self.forward(samples)
+            loss = self.criterion(outputs, targets.long())
             self.log('loss', loss)
             return loss
 
         def validation_step(self, batch, batch_idx):
-            images, target = batch
-            output  = self(images)
-            print(output.size())
-            print(target.size())
-            loss = self.criterion(output, target)
-            acc1, acc5 = accuracy(output, target, topk=(1, 5))
+            samples, targets = batch
+            targets = targets.long()
+            outputs  = self(samples)
+            loss = F.cross_entropy(outputs, targets.long())
+            acc1, acc5 = accuracy(outputs, targets, topk=(1, 5))
             self.log_dict({'validation loss': loss, 'acc1': acc1, 'acc5': acc5}, on_epoch=True)
 
         def configure_optimizers(self):
@@ -110,14 +113,14 @@ def main(config):
         criterion = LabelSmoothingCrossEntropy(smoothing=config.MODEL.LABEL_SMOOTHING)
     else:
         criterion = torch.nn.CrossEntropyLoss()
-    print(criterion)  
-    # lightning_train_engine = lightning_train_wrapper(model, criterion, optimizer, lr_scheduler)
-    # lightning_model = lightning_train_engine(config)
-    # trainer.fit(
-    #     model=lightning_model, 
-    #     train_dataloader=data_loader_train,
-    #     val_dataloaders=data_loader_val,
-    # )
+     
+    lightning_train_engine = lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn)
+    lightning_model = lightning_train_engine(config)
+    trainer.fit(
+        model=lightning_model, 
+        train_dataloader=data_loader_train,
+        val_dataloaders=data_loader_val,
+    )
 
 
 

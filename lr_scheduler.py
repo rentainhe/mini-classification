@@ -1,95 +1,76 @@
 import torch
-from timm.scheduler.cosine_lr import CosineLRScheduler
-from timm.scheduler.step_lr import StepLRScheduler
-from timm.scheduler.scheduler import Scheduler
+import math
+import torch.optim as optim
+from torch.optim.lr_scheduler import LambdaLR
+
 
 
 def build_scheduler(config, optimizer, n_iter_per_epoch):
     num_steps = int(config.TRAIN.EPOCHS * n_iter_per_epoch)
     warmup_steps = int(config.TRAIN.WARMUP_EPOCHS * n_iter_per_epoch)
-    decay_steps = int(config.TRAIN.LR_SCHEDULER.DECAY_EPOCHS * n_iter_per_epoch)
 
     lr_scheduler = None
     if config.TRAIN.LR_SCHEDULER.NAME == 'cosine':
-        lr_scheduler = CosineLRScheduler(
-            optimizer,
-            t_initial=num_steps,
-            t_mul=1.,
-            lr_min=config.TRAIN.MIN_LR,
-            warmup_lr_init=config.TRAIN.WARMUP_LR,
-            warmup_t=warmup_steps,
-            cycle_limit=1,
-            t_in_epochs=False,
+        lr_scheduler = WarmupCosineSchedule(
+            optimizer, warmup_steps=warmup_steps, t_total=num_steps
         )
     elif config.TRAIN.LR_SCHEDULER.NAME == 'linear':
-        lr_scheduler = LinearLRScheduler(
-            optimizer,
-            t_initial=num_steps,
-            lr_min_rate=0.01,
-            warmup_lr_init=config.TRAIN.WARMUP_LR,
-            warmup_t=warmup_steps,
-            t_in_epochs=False,
+        lr_scheduler = WarmupLinearSchedule(
+            optimizer, warmup_steps=warmup_steps, t_total=num_steps
         )
     elif config.TRAIN.LR_SCHEDULER.NAME == 'step':
-        lr_scheduler = StepLRScheduler(
-            optimizer,
-            decay_t=decay_steps,
-            decay_rate=config.TRAIN.LR_SCHEDULER.DECAY_RATE,
-            warmup_lr_init=config.TRAIN.WARMUP_LR,
-            warmup_t=warmup_steps,
-            t_in_epochs=False,
+        lr_scheduler = optim.lr_scheduler.MultiStepLR(
+            optimizer, milestones=config.TRAIN.LR_SCHEDULER.MULTISTONES, gamma=config.TRAIN.LR_SCHEDULER.DECAY_RATE
         )
 
     return lr_scheduler
 
+class WarmupConstantSchedule(LambdaLR):
+    """ Linear warmup and then constant.
+        Linearly increases learning rate schedule from 0 to 1 over `warmup_steps` training steps.
+        Keeps learning rate schedule equal to 1. after warmup_steps.
+    """
+    def __init__(self, optimizer, warmup_steps, last_epoch=-1):
+        self.warmup_steps = warmup_steps
+        super(WarmupConstantSchedule, self).__init__(optimizer, self.lr_lambda, last_epoch=last_epoch)
 
-class LinearLRScheduler(Scheduler):
-    def __init__(self,
-                 optimizer: torch.optim.Optimizer,
-                 t_initial: int,
-                 lr_min_rate: float,
-                 warmup_t=0,
-                 warmup_lr_init=0.,
-                 t_in_epochs=True,
-                 noise_range_t=None,
-                 noise_pct=0.67,
-                 noise_std=1.0,
-                 noise_seed=42,
-                 initialize=True,
-                 ) -> None:
-        super().__init__(
-            optimizer, param_group_field="lr",
-            noise_range_t=noise_range_t, noise_pct=noise_pct, noise_std=noise_std, noise_seed=noise_seed,
-            initialize=initialize)
+    def lr_lambda(self, step):
+        if step < self.warmup_steps:
+            return float(step) / float(max(1.0, self.warmup_steps))
+        return 1.
 
-        self.t_initial = t_initial
-        self.lr_min_rate = lr_min_rate
-        self.warmup_t = warmup_t
-        self.warmup_lr_init = warmup_lr_init
-        self.t_in_epochs = t_in_epochs
-        if self.warmup_t:
-            self.warmup_steps = [(v - warmup_lr_init) / self.warmup_t for v in self.base_values]
-            super().update_groups(self.warmup_lr_init)
-        else:
-            self.warmup_steps = [1 for _ in self.base_values]
 
-    def _get_lr(self, t):
-        if t < self.warmup_t:
-            lrs = [self.warmup_lr_init + t * s for s in self.warmup_steps]
-        else:
-            t = t - self.warmup_t
-            total_t = self.t_initial - self.warmup_t
-            lrs = [v - ((v - v * self.lr_min_rate) * (t / total_t)) for v in self.base_values]
-        return lrs
+class WarmupLinearSchedule(LambdaLR):
+    """ Linear warmup and then linear decay.
+        Linearly increases learning rate from 0 to 1 over `warmup_steps` training steps.
+        Linearly decreases learning rate from 1. to 0. over remaining `t_total - warmup_steps` steps.
+    """
+    def __init__(self, optimizer, warmup_steps, t_total, last_epoch=-1):
+        self.warmup_steps = warmup_steps
+        self.t_total = t_total
+        super(WarmupLinearSchedule, self).__init__(optimizer, self.lr_lambda, last_epoch=last_epoch)
 
-    def get_epoch_values(self, epoch: int):
-        if self.t_in_epochs:
-            return self._get_lr(epoch)
-        else:
-            return None
+    def lr_lambda(self, step):
+        if step < self.warmup_steps:
+            return float(step) / float(max(1, self.warmup_steps))
+        return max(0.0, float(self.t_total - step) / float(max(1.0, self.t_total - self.warmup_steps)))
 
-    def get_update_values(self, num_updates: int):
-        if not self.t_in_epochs:
-            return self._get_lr(num_updates)
-        else:
-            return None
+
+class WarmupCosineSchedule(LambdaLR):
+    """ Linear warmup and then cosine decay.
+        Linearly increases learning rate from 0 to 1 over `warmup_steps` training steps.
+        Decreases learning rate from 1. to 0. over remaining `t_total - warmup_steps` steps following a cosine curve.
+        If `cycles` (default=0.5) is different from default, learning rate follows cosine function after warmup.
+    """
+    def __init__(self, optimizer, warmup_steps, t_total, cycles=.5, last_epoch=-1):
+        self.warmup_steps = warmup_steps
+        self.t_total = t_total
+        self.cycles = cycles
+        super(WarmupCosineSchedule, self).__init__(optimizer, self.lr_lambda, last_epoch=last_epoch)
+
+    def lr_lambda(self, step):
+        if step < self.warmup_steps:
+            return float(step) / float(max(1.0, self.warmup_steps))
+        # progress after warmup
+        progress = float(step - self.warmup_steps) / float(max(1, self.t_total - self.warmup_steps))
+        return max(0.0, 0.5 * (1. + math.cos(math.pi * float(self.cycles) * 2.0 * progress)))

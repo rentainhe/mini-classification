@@ -1,5 +1,6 @@
 DATA:
   DATASET: 'cifar100'
+  IMG_SIZE: 32
 MODEL:
   TYPE: resnet18
   NAME: resnet18-cifar100
