@@ -135,6 +135,11 @@ _C.AUG.MIXUP_PROB = 1.0
 _C.AUG.MIXUP_SWITCH_PROB = 0.5
 # How to apply mixup/cutmix params. Per "batch", "pair", or "elem"
 _C.AUG.MIXUP_MODE = 'batch'
+# Probability of horizontal flop image
+_C.AUG.RANDOM_HORIZONTAL_FLOP = 0.5
+# Random Rotation
+_C.AUG.RANDOM_ROTATION = 15
+
 
 # -----------------------------------------------------------------------------
 # Testing settings
