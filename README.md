@@ -16,3 +16,9 @@ $ pip install pytorch-lightning
 ```bash
 $ python run.py --run train --config cifar100 --name test
 ```
+
+## Acknowledgements
+Thanks a lot for these repos:
+- [pytorch-image-models](https://github.com/rwightman/pytorch-image-models)
+- [Swin-Transformer](https://github.com/microsoft/Swin-Transformer)
+- [pytorch-cifar100](https://github.com/weiaicunzai/pytorch-cifar100)

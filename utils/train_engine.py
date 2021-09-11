@@ -1,4 +1,4 @@
-# import all you need
+import torch
 import torch.nn.functional as F
 from pytorch_lightning import Trainer
 from pytorch_lightning.core.lightning import LightningModule
@@ -11,10 +11,10 @@ from callbacks_old.callbacks import interval_validation
 from callbacks_old.get_callbacks import get_callbacks, get_callbacks_list
 from pytorch_lightning import loggers as pl_loggers
 from callbacks import build_callbacks
+from optimizer import build_optimizer
 
 
 def train_engine(__C):
-    # define training loop in LightningModule
     class Lightning_Training(LightningModule):
         def __init__(self, config, hparams):
             super().__init__()
@@ -32,14 +32,6 @@ def train_engine(__C):
             loss = F.cross_entropy(preds, labels)
             self.log('loss', loss)
             return loss
-
-        # def validation_step(self, batch, batch_idx):
-        #     images, labels = batch
-        #     preds = self(images)
-        #     loss = F.cross_entropy(preds, labels)
-        #     labels_hat = torch.argmax(preds, dim=1)
-        #     top_1_acc = torch.sum(labels == labels_hat).item() / (len(labels) * 1.0)
-        #     self.log_dict({'test_loss': loss, 'top-1': top_1_acc, 'top-5':}, on_epoch=True)
 
         def validation_step(self, batch, batch_idx):
             images, labels = batch
@@ -68,13 +60,6 @@ def train_engine(__C):
     train_loader = get_train_loader(__C)
     test_loader = get_test_loader(__C)
 
-    # define callbacks
-    # lr_monitor = LearningRateMonitor(logging_interval='step')
-    # dir_path = os.path.join('ckpts',__C.name)
-    # checkpoint_monitor = ModelCheckpoint(dirpath=dir_path, filename=str(__C.version), monitor='test_acc', save_top_k=1, save_last=True)
-    # save_checkpoint_monitor = save_monitor(__C)
-    # validation_monitor = interval_validation(__C)
-
     # get callback list
     callbacks = get_callbacks_list(__C)
     # define logger
@@ -89,12 +74,10 @@ def train_engine(__C):
                       accumulate_grad_batches=__C.training['gradient_accumulation_steps'],
                       callbacks=callbacks,
                       precision=__C.training['precision'],
-                      auto_select_gpus=__C.training['auto_select_gpus'],
                       val_check_interval=__C.training['val_check_interval'],
                       accelerator=__C.accelerator['mode'],
                       logger=[tb_logger])
                     #   fast_dev_run=__C.debug)
 
-    # trainer.fit(Lightning_Training, train_loader, test_loader)
     trainer.fit(model=Lightning_Training, 
     train_dataloader=train_loader, val_dataloaders=test_loader)

@@ -42,6 +42,8 @@ _C.MODEL.RESUME = ''
 _C.MODEL.NUM_CLASSES = 1000
 # Dropout rate
 _C.MODEL.DROP_RATE = 0.0
+# Drop path rate
+_C.MODEL.DROP_PATH_RATE = 0.1
 # Label Smoothing
 _C.MODEL.LABEL_SMOOTHING = 0.1
 
@@ -192,6 +194,8 @@ def update_config(config, args):
         config.DATA.BATCH_SIZE = args.batch_size
     if args.data_path:
         config.DATA.DATA_PATH = args.data_path
+    if args.gpu:
+        config.TRAIN.ACCELERATOR.GPUS = args.gpu
     if args.zip:
         config.DATA.ZIP_MODE = True
     if args.cache_mode:
@@ -200,6 +204,8 @@ def update_config(config, args):
         config.MODEL.RESUME = args.resume
     if args.accumulation_steps:
         config.TRAIN.ACCUMULATION_STEPS = args.accumulation_steps
+    if args.precision:
+        config.TRAIN.PRECISION = args.precision
     if args.use_checkpoint:
         config.TRAIN.USE_CHECKPOINT = True
     if args.output:
@@ -208,11 +214,8 @@ def update_config(config, args):
         config.TAG = args.tag
     if args.eval:
         config.EVAL_MODE = True
-    if args.throughput:
-        config.THROUGHPUT_MODE = True
-
-    # set local rank for distributed training
-    config.LOCAL_RANK = args.local_rank
+    # if args.throughput:
+    #     config.THROUGHPUT_MODE = True
 
     # output folder
     config.OUTPUT = os.path.join(config.OUTPUT, config.MODEL.NAME, config.TAG)
