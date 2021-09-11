@@ -1,0 +1,6 @@
+DATA:
+  DATASET: 'cifar100'
+MODEL:
+  TYPE: resnet50
+  NAME: resnet50-cifar100
+  NUM_CLASSES: 100

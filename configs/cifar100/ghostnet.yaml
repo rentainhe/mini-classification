@@ -1,4 +1,0 @@
-MODEL:
-  TYPE: ghostnet
-  NAME: ghostnet_cifar100
-  DROP_PATH_RATE: 0.5
