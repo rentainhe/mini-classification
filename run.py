@@ -1,7 +1,21 @@
+import os
 import argparse, yaml
-from configs.build_config import configs
-from utils.train_engine import train_engine
+
+# mini-classification basic builders
 from config import get_config
+from data.build import build_loader
+from models.build import build_model
+from optimizer import build_optimizer
+from lr_scheduler import build_scheduler
+
+# pytorch-lightning
+from pytorch_lightning.core.lightning import LightningModule
+
+# pytorch and timm
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from timm.utils import accuracy
 
 def parse_option():
     parser = argparse.ArgumentParser(description='mini-classification args', add_help=False)
@@ -37,23 +51,64 @@ def parse_option():
 
     return args, config
 
+def train_engine(config, model, criterion, optimizer, lr_scheduler):
+    class Lightning_Training(LightningModule):
+        def __init__(self, config, hparams):
+            super().__init__()
+            self.config = config
+            self.save_hyperparameters(hparams)
+            self.model = model
+            self.criterion = criterion
+            self.optimizer = optimizer
+            self.lr_scheduler = lr_scheduler
+
+        def forward(self, x):
+            x = self.model(x)
+            return x
+
+        def training_step(self, batch, batch_idx):
+            images, labels = batch
+            preds = self.forward(images)
+            loss = self.criterion(preds, labels)
+            self.log('loss', loss)
+            return loss
+
+        def validation_step(self, batch, batch_idx):
+            images, labels = batch
+            test_outputs = self(images)
+            loss = F.cross_entropy(test_outputs, labels)
+            _, pred = test_outputs.topk(5, 1, largest=True, sorted=True)
+            labels = labels.view(labels.size(0), -1).expand_as(pred)
+            correct = pred.eq(labels).float()
+
+            # top-5
+            correct_5 = correct[:, :5].sum()
+
+            # top-1
+            correct_1 = correct[:, :1].sum()
+            self.log_dict({'test_loss': loss, 'top-1': correct_1, 'top-5': correct_5}, on_epoch=True)
+
+        def configure_optimizers(self):
+            optimizer = self.optimizer
+            scheduler = {
+                'scheduler': self.lr_scheduler,
+                'interval': 'step',
+            }
+            return {'optimizer': optimizer, 'lr_scheduler': scheduler}
+
+
+def main(config):
+    dataset_train, dataset_val, data_loader_train, data_loader_val, mixup_fn = build_loader(config)
+    model = build_model(config)
+    optimizer = build_optimizer(config)
+    lr_scheduler = build_scheduler(config, optimizer, len(data_loader_train))
+
+
+
+
 if __name__ == '__main__':
     _, config = parse_option()
-    print(config)
-
-    # args = parse_args()
-    # cfg_file = "configs/{}.yaml".format(args.config)
-    # with open(cfg_file, 'r') as f:
-    #     yaml_dict = yaml.load(f)
-
-    # args_dict = configs.parse_to_dict(args)
-    # args_dict = {**yaml_dict, **args_dict}
-    # configs.add_args(args_dict)
-
-    # configs.training_init()
-    # configs.path_init()
-
-    # print("Hyper parameters:")
-    # print(configs.__dict__)
+    print("Hyper parameters:")
+    print(configs)
     # if configs.run_mode == 'train':
     #     train_engine(configs)
