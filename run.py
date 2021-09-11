@@ -50,7 +50,7 @@ def parse_option():
     parser.add_argument('--tag', type=str, default='default', help='name of this training')
     parser.add_argument('--accumulation-steps', type=int, help="gradient accumulation steps")
     parser.add_argument('--precision', type=int, default=16, choices=[16, 32], help='whether to use fp16 training')
-    parser.add_argument('--accelerator', type=str, default='ddp', choices=['dp', 'ddp'], help='')
+    parser.add_argument('--accelerator', type=str, default='dp', choices=['dp', 'ddp'], help='DataParallel or Distributed DataParallel')
     args, unparsed = parser.parse_known_args()
 
     config = get_config(args)
@@ -77,9 +77,8 @@ def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn)
             samples, targets = batch
             if self.mixup_fn is not None:
                 samples, targets = mixup_fn(samples, targets)
-
             outputs = self.forward(samples)
-            loss = self.criterion(outputs, targets.long())
+            loss = self.criterion(outputs, targets)
             self.log('loss', loss)
             return loss
 
@@ -87,7 +86,7 @@ def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn)
             samples, targets = batch
             targets = targets.long()
             outputs  = self(samples)
-            loss = F.cross_entropy(outputs, targets.long())
+            loss = F.cross_entropy(outputs, targets)
             acc1, acc5 = accuracy(outputs, targets, topk=(1, 5))
             self.log_dict({'validation loss': loss, 'acc1': acc1, 'acc5': acc5}, on_epoch=True)
 

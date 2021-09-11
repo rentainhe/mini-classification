@@ -217,6 +217,8 @@ def update_config(config, args):
         config.TRAIN.ACCUMULATION_STEPS = args.accumulation_steps
     if args.precision:
         config.TRAIN.PRECISION = args.precision
+    if args.accelerator:
+        config.TRAIN.ACCELERATOR.MODE = args.accelerator
     if args.use_checkpoint:
         config.TRAIN.USE_CHECKPOINT = True
     if args.output:
