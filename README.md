@@ -11,13 +11,13 @@ Mini-Classification是一个基于pytorch-lightning写的轻量化的图像分�
   - **面向进阶者** 对于进阶者而言，Mini-Classification致力于尽量将使用者研究时需要的内容容纳进来，并且将代码拓展性尽量做好，便于使用。
 - **开源精神** 想做好一个完整的开源项目，如果使用者有更好的想法，非常欢迎对这个小小的开源项目提供支持和帮助。
 
-### 特性
-- 原则
-
-### TODO List
-- [ ] 实现最基本的训练验证功能，并复现主流视觉模型在cifar100任务上的训练
-- [ ] 复现vision transformer模型在ImageNet任务上的结果
-
+### 基本功能
+- [x] 配置统一的config文件
+- [x] 实现完整的模型训练流程，并且默认保存模型训练过程中的最好结果
+- [x] 配置tensorboard，记录训练过程中的变量：`training loss`, `learning rate`, `acc1`, `acc5`, `validation loss`等
+- [x] 增加`step`, `cosine`, `linear`三种`lr_scheduler`。
+- [x] 增加`DP`和`DDP`训练功能，并且可以通过`args`来指定特定的`device`
+- [x] 增加`fp16`半精度训练
 
 
 ## 安装与使用

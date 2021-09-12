@@ -85,7 +85,7 @@ def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn,
                 outputs = self.forward(samples)
                 loss = self.criterion(outputs, targets.long())
             self.lr_scheduler.step()
-            self.log('loss', loss)
+            self.log('training loss', loss)
             self.log('lr', self.lr_scheduler.get_lr()[0])
             return loss
 
