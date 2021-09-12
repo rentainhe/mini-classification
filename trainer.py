@@ -1,9 +1,17 @@
+import os
 from pytorch_lightning import Trainer
 from pytorch_lightning import loggers as pl_loggers
 from callbacks import build_callbacks
 
 def build_trainer(config):
-    tensorboard_logger = pl_loggers.TensorBoardLogger(name=config.MODEL.NAME, version=config.TAG, save_dir=config.LOG_OUTPUT)
+    """
+    the final log file will be stored as: 
+    <log-output>/<dataset>/<model-type>/<model-name>/<tag>
+    """
+    log_save_dir = os.path.join(config.LOG_OUTPUT, config.DATA.DATASET, config.MODEL.TYPE)
+    tensorboard_logger = pl_loggers.TensorBoardLogger(name=config.MODEL.NAME, 
+                                                      version=config.TAG, 
+                                                      save_dir=log_save_dir)
     callbacks = build_callbacks(config)
     trainer = Trainer(
         max_epochs = config.TRAIN.EPOCHS,

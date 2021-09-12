@@ -37,7 +37,7 @@ $ python run.py --cfg configs/cifar100/resnet/resnet18.yaml --gpu 0,1 --accelera
 ```
 
 ## Acknowledgements
-Thanks a lot for these repos:
+非常感谢以下优秀的开源代码所提供的参考
 - [pytorch-image-models](https://github.com/rwightman/pytorch-image-models)
 - [Swin-Transformer](https://github.com/microsoft/Swin-Transformer)
 - [pytorch-cifar100](https://github.com/weiaicunzai/pytorch-cifar100)
