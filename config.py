@@ -110,6 +110,7 @@ _C.TRAIN.ACCELERATOR = CN()
 _C.TRAIN.ACCELERATOR.GPUS = "1"
 _C.TRAIN.ACCELERATOR.MODE = 'ddp'
 _C.TRAIN.ACCELERATOR.NUM_NODES = 1
+_C.TRAIN.ACCELERATOR.GPUS_PER_NODE = 1
 
 # -----------------------------------------------------------------------------
 # Augmentation settings
@@ -207,6 +208,7 @@ def update_config(config, args):
         config.DATA.DATA_PATH = args.data_path
     if args.gpu:
         config.TRAIN.ACCELERATOR.GPUS = args.gpu
+        config.TRAIN.ACCELERATOR.GPUS_PER_NODE = len(args.gpu.split(','))
     if args.zip:
         config.DATA.ZIP_MODE = True
     if args.cache_mode:
