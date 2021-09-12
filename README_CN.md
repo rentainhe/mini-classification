@@ -1,8 +1,8 @@
 # mini-classification
-A simple `classification` project based on [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning)
+基于`pytorch-lightning`的分类任务框架
 
 
-## Updates
+### 简介
 - 2021-09-12
 
 
