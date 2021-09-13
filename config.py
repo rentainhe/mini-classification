@@ -95,9 +95,11 @@ _C.TRAIN.OPTIMIZER.MOMENTUM = 0.9
 
 # Callbacks
 _C.TRAIN.CALLBACKS = CN()
+# Monitor learning rate during training
 _C.TRAIN.CALLBACKS.LEARNING_RATE_MONITOR = CN()
 _C.TRAIN.CALLBACKS.LEARNING_RATE_MONITOR.ENABLE = True
 _C.TRAIN.CALLBACKS.LEARNING_RATE_MONITOR.LOGGING_INTERVAL = 'step'
+# Save checkpoint based on acc1
 _C.TRAIN.CALLBACKS.MODEL_CHECKPOINT = CN()
 _C.TRAIN.CALLBACKS.MODEL_CHECKPOINT.ENABLE = True
 _C.TRAIN.CALLBACKS.MODEL_CHECKPOINT.FILE_NAME = 'best-model'
@@ -237,7 +239,7 @@ def update_config(config, args):
     #     config.THROUGHPUT_MODE = True
 
     # output folder
-    config.OUTPUT = os.path.join(config.OUTPUT, config.MODEL.NAME, config.TAG)
+    config.OUTPUT = os.path.join(config.OUTPUT, config.DATA.DATASET, config.MODEL.NAME, config.TAG)
 
     config.freeze()
 
