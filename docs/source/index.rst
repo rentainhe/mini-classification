@@ -13,6 +13,12 @@ Welcome to mini-classification's documentation!
 
    Installation                  <basic/install>
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Model Zoo
+   :name: models
+
+   CIFAR100                  <model_zoo/CIFAR100>
 
 Indices and tables
 ==================
