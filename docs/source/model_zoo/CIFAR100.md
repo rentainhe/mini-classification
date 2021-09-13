@@ -38,7 +38,7 @@ We use `sgd` optimizer and  `cosine lr-scheduler` to trained all these models in
 
 **ResNet**
 - [**Relative Paper**](https://arxiv.org/abs/1512.03385v1) 
-- [**Training Log**]()
+- [**Training Log**](https://tensorboard.dev/experiment/2yn8p4FwRs2ENzZXmYKO1g/)
 
 |   Model   | Warmup Epochs | Epochs | Base Lr | Scheduler | Acc1  | Acc5  |
 |:---------:|:-------------:|:------:|:-------:|:---------:|:-----:|:-----:|
