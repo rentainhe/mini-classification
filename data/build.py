@@ -10,12 +10,15 @@ import torch
 import numpy as np
 from torch.utils.data import RandomSampler, SequentialSampler
 from torchvision import datasets, transforms
-from timm.data.constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from timm.data import Mixup
 from timm.data import create_transform
 from timm.data.transforms import _pil_interp
 
-# Cifar100 Data Settings
+# ImageNet Default Settings
+IMAGENET_DEFAULT_MEAN = [0.485, 0.456, 0.406]
+IMAGENET_DEFAULT_STD = [0.229, 0.224, 0.225]
+
+# Cifar100 Default Settings
 CIFAR100_DEFAULT_MEAN = [0.5070751592371323, 0.48654887331495095, 0.4409178433670343]
 CIFAR100_DEFAULT_STD = [0.2673342858792401, 0.2564384629170883, 0.27615047132568404]
 
@@ -89,7 +92,7 @@ def build_cifar100_transform(is_train, config):
         t.append(transforms.RandomHorizontalFlip(config.AUG.RANDOM_HORIZONTAL_FLOP))
         t.append(transforms.RandomRotation(config.AUG.RANDOM_ROTATION))
     t.append(transforms.ToTensor())
-    t.append(transforms.Normalize(CIFAR100_DEFAULT_MEAN, CIFAR100_DEFAULT_STD))
+    t.append(transforms.Normalize(config.DATA.MEAN, config.DATA.STD))
     return transforms.Compose(t)
 
 def build_transform(is_train, config):
@@ -99,6 +102,8 @@ def build_transform(is_train, config):
         transform = create_transform(
             input_size=config.DATA.IMG_SIZE,
             is_training=True,
+            hflip=config.AUG.RANDOM_HORIZONTAL_FLOP,
+            scale=config.AUG.SCALE,
             color_jitter=config.AUG.COLOR_JITTER if config.AUG.COLOR_JITTER > 0 else None,
             auto_augment=config.AUG.AUTO_AUGMENT if config.AUG.AUTO_AUGMENT != 'none' else None,
             re_prob=config.AUG.REPROB,
@@ -128,5 +133,5 @@ def build_transform(is_train, config):
             )
 
     t.append(transforms.ToTensor())
-    t.append(transforms.Normalize(IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD))
+    t.append(transforms.Normalize(config.DATA.MEAN, config.DATA.STD))
     return transforms.Compose(t)

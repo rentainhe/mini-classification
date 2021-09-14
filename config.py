@@ -19,6 +19,10 @@ _C.DATA.EVAL_BATCH_SIZE = 64
 _C.DATA.DATA_PATH = ''
 # Dataset name
 _C.DATA.DATASET = 'imagenet'
+# Mean statistics for normalization
+_C.DATA.MEAN = [0.485, 0.456, 0.406]
+# Std statistics for normalization
+_C.DATA.STD = [0.229, 0.224, 0.225]
 # Input image size
 _C.DATA.IMG_SIZE = 224
 # Interpolation to resize image (random, bilinear, bicubic)
@@ -64,7 +68,7 @@ _C.MODEL.VIT.HIDDEN_SIZE = 768
 _C.MODEL.VIT.MLP_DIM = 3072
 _C.MODEL.VIT.NUM_HEADS = 12
 _C.MODEL.VIT.NUM_LAYERS = 12
-_C.MODEL.VIT.ATTENTION_DROP_RATE = 0.1
+_C.MODEL.VIT.ATTENTION_DROP_RATE = 0.
 _C.MODEL.VIT.DROPOUT_RATE = 0.1
 _C.MODEL.VIT.CLASSIFIER = 'token'
 _C.MODEL.VIT.REPRESENTATION_SIZE = None
@@ -148,6 +152,8 @@ _C.TRAIN.ACCELERATOR.GPUS_PER_NODE = 1
 # Augmentation settings
 # -----------------------------------------------------------------------------
 _C.AUG = CN()
+# Range of size of the origin size cropped, used in RandomResizedCropAndInterpolation
+_C.AUG.SCALE = (0.08, 1)
 # Color jitter factor
 _C.AUG.COLOR_JITTER = 0.4
 # Use AutoAugment policy. "v0" or "original"
