@@ -57,15 +57,35 @@ _C.MODEL.DENSENET = CN()
 _C.MODEL.DENSENET.NUM_BLOCK = [6,12,24,16]
 _C.MODEL.DENSENET.GROWTH_RATE = 32
 
+# ViT parameters
+_C.MODEL.VIT = CN()
+_C.MODEL.VIT.PATCH_SIZE = 16
+_C.MODEL.VIT.HIDDEN_SIZE = 768
+_C.MODEL.VIT.MLP_DIM = 3072
+_C.MODEL.VIT.NUM_HEADS = 12
+_C.MODEL.VIT.NUM_LAYERS = 12
+_C.MODEL.VIT.ATTENTION_DROP_RATE = 0.1
+_C.MODEL.VIT.DROPOUT_RATE = 0.1
+_C.MODEL.VIT.CLASSIFIER = 'token'
+_C.MODEL.VIT.REPRESENTATION_SIZE = None
+_C.MODEL.VIT.ZERO_HEAD = False
+# _C.MODEL.VIT.VIS = False
+
 # -----------------------------------------------------------------------------
 # Training settings
 # -----------------------------------------------------------------------------
 _C.TRAIN = CN()
 
 # Basic training hyper-parameters
+# Training mode, 'epoch' for training model within specific epochs and 'steps' for training model within specific steps
+_C.TRAIN.MODE = 'epoch'
 _C.TRAIN.START_EPOCH = 0
 _C.TRAIN.EPOCHS = 300
 _C.TRAIN.WARMUP_EPOCHS = 20
+
+_C.TRAIN.STEPS = 20000
+_C.TRAIN.WARMUP_STEPS = 500
+
 _C.TRAIN.WEIGHT_DECAY = 0.05
 _C.TRAIN.BASE_LR = 5e-4
 _C.TRAIN.WARMUP_LR = 5e-7

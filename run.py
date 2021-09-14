@@ -7,7 +7,7 @@ from data.build import build_loader
 from models.build import build_model
 from optimizer import build_optimizer
 from lr_scheduler import build_scheduler
-from trainer import build_trainer
+from trainer import build_epoch_trainer
 
 # pytorch-lightning
 from pytorch_lightning.core.lightning import LightningModule
@@ -111,7 +111,7 @@ def main(config):
     model = build_model(config)
     optimizer = build_optimizer(config, model)
     lr_scheduler = build_scheduler(config, optimizer, len(data_loader_train))
-    trainer = build_trainer(config)
+    trainer = build_epoch_trainer(config)
     mixup = True
     if config.AUG.MIXUP > 0.:
         # smoothing is handled with mixup label transform
