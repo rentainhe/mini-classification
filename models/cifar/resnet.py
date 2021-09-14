@@ -160,7 +160,7 @@ def resnet152():
     return ResNet(BottleNeck, [3, 8, 36, 3])
 
 def build_resnet(block_type, num_block):
-    """Build ResNet model from config
+    """Build ResNet model
     """
     # block_type = config.MODEL.RESNET.BLOCK
     # num_block = config.MODEL.RESNET.NUM_BLOCK

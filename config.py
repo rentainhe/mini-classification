@@ -52,6 +52,11 @@ _C.MODEL.RESNET = CN()
 _C.MODEL.RESNET.BLOCK = 'basic' # {'basic' or 'bottleneck'}
 _C.MODEL.RESNET.NUM_BLOCK = [2, 2, 2, 2]
 
+# DenseNet parameters
+_C.MODEL.DENSENET = CN()
+_C.MODEL.DENSENET.NUM_BLOCK = [6,12,24,16]
+_C.MODEL.DENSENET.GROWTH_RATE = 32
+
 # -----------------------------------------------------------------------------
 # Training settings
 # -----------------------------------------------------------------------------
