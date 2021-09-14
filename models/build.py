@@ -3,14 +3,11 @@
 # Written by rentainhe
 # --------------------------------------------------------
 
-from models.cifar.resnet import ResNet
-
-
 def build_model(config):
     dataset = config.DATA.DATASET
     model_type = config.MODEL.TYPE
     model_name = config.MODEL.NAME
-    if dataset in ['cifar10', 'cifar100']:
+    if dataset == 'cifar100':
         if model_type == 'resnet':
             from models.cifar.resnet import build_resnet
             return build_resnet(

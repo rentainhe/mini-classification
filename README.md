@@ -19,6 +19,8 @@ Mini-Classification是一个基于pytorch-lightning写的轻量化的图像分�
 - [x] 增加`DP`和`DDP`训练功能，并且可以通过`args`来指定特定的`device`
 - [x] 增加`fp16`半精度训练
 
+### 更新日志
+如果需要了解`mini-classification`最新的更新，可以查看[changelog.md](/changelog.md)获取更多细节
 
 ## 安装与使用
 ### 安装
