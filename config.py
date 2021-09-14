@@ -140,6 +140,10 @@ _C.TRAIN.CALLBACKS.MODEL_CHECKPOINT.FILE_NAME = 'best-model'
 _C.TRAIN.CALLBACKS.MODEL_CHECKPOINT.MONITOR = 'acc1'
 _C.TRAIN.CALLBACKS.MODEL_CHECKPOINT.SAVE_TOP_K = 1
 _C.TRAIN.CALLBACKS.MODEL_CHECKPOINT.MODE = 'max'
+# Validate on specified steps
+_C.TRAIN.CALLBACKS.INTERVAL_STEP_VALIDATE = CN()
+_C.TRAIN.CALLBACKS.INTERVAL_STEP_VALIDATE.ENABLE = False
+_C.TRAIN.CALLBACKS.INTERVAL_STEP_VALIDATE.INTERVAL = 1000
 
 # Accelerator
 _C.TRAIN.ACCELERATOR = CN()
@@ -154,6 +158,7 @@ _C.TRAIN.ACCELERATOR.GPUS_PER_NODE = 1
 _C.AUG = CN()
 # Range of size of the origin size cropped, used in RandomResizedCropAndInterpolation
 _C.AUG.SCALE = (0.08, 1)
+# 
 # Color jitter factor
 _C.AUG.COLOR_JITTER = 0.4
 # Use AutoAugment policy. "v0" or "original"
@@ -176,8 +181,10 @@ _C.AUG.MIXUP_PROB = 1.0
 _C.AUG.MIXUP_SWITCH_PROB = 0.5
 # How to apply mixup/cutmix params. Per "batch", "pair", or "elem"
 _C.AUG.MIXUP_MODE = 'batch'
-# Probability of horizontal flop image
-_C.AUG.RANDOM_HORIZONTAL_FLOP = 0.5
+# Probability of horizontal flip the image
+_C.AUG.RANDOM_HORIZONTAL_FLIP = 0.5
+# Probability of vertical flip the image
+_C.AUG.RANDOM_VERTICAL_FLIP = 0.
 # Random Rotation
 _C.AUG.RANDOM_ROTATION = 15
 

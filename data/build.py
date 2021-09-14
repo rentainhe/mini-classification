@@ -89,7 +89,7 @@ def build_cifar100_transform(is_train, config):
     t = []
     if is_train:
         t.append(transforms.RandomCrop(config.DATA.IMG_SIZE, padding=4))
-        t.append(transforms.RandomHorizontalFlip(config.AUG.RANDOM_HORIZONTAL_FLOP))
+        t.append(transforms.RandomHorizontalFlip(config.AUG.RANDOM_HORIZONTAL_FLIP))
         t.append(transforms.RandomRotation(config.AUG.RANDOM_ROTATION))
     t.append(transforms.ToTensor())
     t.append(transforms.Normalize(config.DATA.MEAN, config.DATA.STD))
@@ -102,7 +102,8 @@ def build_transform(is_train, config):
         transform = create_transform(
             input_size=config.DATA.IMG_SIZE,
             is_training=True,
-            hflip=config.AUG.RANDOM_HORIZONTAL_FLOP,
+            hflip=config.AUG.RANDOM_HORIZONTAL_FLIP,
+            vflip=config.AUG.RANDOM_VERTICAL_FLIP,
             scale=config.AUG.SCALE,
             color_jitter=config.AUG.COLOR_JITTER if config.AUG.COLOR_JITTER > 0 else None,
             auto_augment=config.AUG.AUTO_AUGMENT if config.AUG.AUTO_AUGMENT != 'none' else None,
