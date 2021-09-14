@@ -40,10 +40,10 @@ We use `sgd` optimizer and  `cosine lr-scheduler` to trained all these models in
 - [**Relative Paper**](https://arxiv.org/abs/1512.03385v1) 
 - [**Training Log**](https://tensorboard.dev/experiment/2yn8p4FwRs2ENzZXmYKO1g/)
 
-|   Model   | Warmup Epochs | Epochs | Base Lr | Scheduler | Acc1  | Acc5  |
-|:---------:|:-------------:|:------:|:-------:|:---------:|:-----:|:-----:|
-| ResNet18  |      20       |   300  |   0.1   |  Cosine   | 75.46 | 91.72 |
-| ResNet34  |      20       |   300  |   0.1   |  Cosine   | 76.15 | 92.67 |
-| ResNet50  |      20       |   300  |   0.1   |  Cosine   | 77.36 | 93.57 |
-| ResNet101 |      20       |   300  |   0.1   |  Cosine   | 78.56 | 94.13 |
-| ResNet152 |      20       |   300  |   0.1   |  Cosine   | 78.29 | 94.13 |
+|   Model   | Warmup Epochs | Epochs | Optimizer | Base Lr | Scheduler | Acc1  | Acc5  |
+|:----------|:--------:|:------:|:---:|:------:|:---------:|:-----:|:-----:|
+| ResNet18  | 20       |   300  | SGD |  0.1   |  Cosine   | 75.46 | 91.72 |
+| ResNet34  | 20       |   300  | SGD |  0.1   |  Cosine   | 76.15 | 92.67 |
+| ResNet50  | 20       |   300  | SGD |  0.1   |  Cosine   | 77.36 | 93.57 |
+| ResNet101 | 20       |   300  | SGD |  0.1   |  Cosine   | 78.56 | 94.13 |
+| ResNet152 | 20       |   300  | SGD |  0.1   |  Cosine   | 78.29 | 94.13 |

@@ -159,5 +159,13 @@ def resnet152():
     """
     return ResNet(BottleNeck, [3, 8, 36, 3])
 
-
-
+def build_resnet(block_type, num_block):
+    """Build ResNet model from config
+    """
+    # block_type = config.MODEL.RESNET.BLOCK
+    # num_block = config.MODEL.RESNET.NUM_BLOCK
+    assert block_type in ['basic', 'bottleneck'], "Please choose block type from ['basic', 'bottleneck'] to build ResNet model"
+    if block_type == 'basic':
+        return ResNet(BasicBlock, num_block=num_block)
+    elif block_type == 'bottleneck':
+        return ResNet(BottleNeck, num_block=num_block)

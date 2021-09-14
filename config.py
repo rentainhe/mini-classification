@@ -47,6 +47,11 @@ _C.MODEL.DROP_PATH_RATE = 0.1
 # Label Smoothing
 _C.MODEL.LABEL_SMOOTHING = 0.1
 
+# ResNet parameters
+_C.MODEL.RESNET = CN()
+_C.MODEL.RESNET.BLOCK = 'basic' # {'basic' or 'bottleneck'}
+_C.MODEL.RESNET.NUM_BLOCK = [2, 2, 2, 2]
+
 # -----------------------------------------------------------------------------
 # Training settings
 # -----------------------------------------------------------------------------
