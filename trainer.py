@@ -17,7 +17,7 @@ def build_epoch_trainer(config):
     trainer = Trainer(
         max_epochs = config.TRAIN.EPOCHS,
         gpus = config.TRAIN.ACCELERATOR.GPUS,
-        accumulate_grad_batches = config.TRAIN.ACCUMULATION_STEPS,
+        # accumulate_grad_batches = config.TRAIN.ACCUMULATION_STEPS,
         callbacks = callbacks,
         precision = config.TRAIN.PRECISION,
         accelerator = config.TRAIN.ACCELERATOR.MODE,

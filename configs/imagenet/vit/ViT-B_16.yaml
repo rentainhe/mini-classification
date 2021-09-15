@@ -19,7 +19,7 @@ MODEL:
     ZERO_HEAD: True
     PRETRAINED_WEIGHT: '/data/rentianhe/weight/vit_pytorch/ViT-B_16.npz'
 TRAIN:
-  MODE: epoch
+  MODE: step
   STEPS: 20000
   WARMUP_EPOCHS: 500
   BASE_LR: 3e-2

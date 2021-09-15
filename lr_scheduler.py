@@ -3,9 +3,33 @@ import math
 import torch.optim as optim
 from torch.optim.lr_scheduler import LambdaLR
 
+def build_finetune_scheduler(config, optimizer):
+    num_steps = config.TRAIN.STEPS
+    warmup_steps = config.TRAIN.WARMUP_STEPS
+
+    # scale steps due to ddp mode
+    """
+    We've find that lightning will change step iterations in 'ddp' mode but not in 'dp'
+    So we have to change steps in order to get the right scheduler behavior
+    """
+    if config.TRAIN.ACCELERATOR.MODE == 'ddp':
+        if config.TRAIN.ACCELERATOR.GPUS_PER_NODE > 1:
+            num_steps = num_steps // config.TRAIN.ACCELERATOR.GPUS_PER_NODE
+            warmup_steps = warmup_steps // config.TRAIN.ACCELERATOR.GPUS_PER_NODE
+
+    lr_scheduler = None
+    if config.TRAIN.LR_SCHEDULER.NAME == 'cosine':
+        lr_scheduler = WarmupCosineSchedule(
+            optimizer, warmup_steps=warmup_steps, t_total=num_steps
+        )
+    elif config.TRAIN.LR_SCHEDULER.NAME == 'linear':
+        lr_scheduler = WarmupLinearSchedule(
+            optimizer, warmup_steps=warmup_steps, t_total=num_steps
+        )
+    return lr_scheduler
 
 
-def build_scheduler(config, optimizer, n_iter_per_epoch):
+def build_epoch_scheduler(config, optimizer, n_iter_per_epoch):
     num_steps = int(config.TRAIN.EPOCHS * n_iter_per_epoch)
     warmup_steps = int(config.TRAIN.WARMUP_EPOCHS * n_iter_per_epoch)
 
