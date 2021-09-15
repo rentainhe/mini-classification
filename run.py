@@ -7,7 +7,7 @@ from data.build import build_loader
 from models.build import build_model
 from optimizer import build_optimizer
 from lr_scheduler import build_scheduler
-from trainer import build_epoch_trainer
+from trainer import build_epoch_trainer, build_finetune_trainer
 
 # pytorch-lightning
 from pytorch_lightning.core.lightning import LightningModule
@@ -52,7 +52,7 @@ def parse_option():
     parser.add_argument('--precision', type=int, default=16, choices=[16, 32], help='whether to use fp16 training')
     parser.add_argument('--accelerator', type=str, default='dp', choices=['dp', 'ddp'], help='DataParallel or Distributed DataParallel')
     args, unparsed = parser.parse_known_args()
-
+    
     config = get_config(args)
 
     return args, config
@@ -111,7 +111,10 @@ def main(config):
     model = build_model(config)
     optimizer = build_optimizer(config, model)
     lr_scheduler = build_scheduler(config, optimizer, len(data_loader_train))
-    trainer = build_epoch_trainer(config)
+    if config.TRAIN.MODE == 'epoch':
+        trainer = build_epoch_trainer(config)
+    elif config.TRAIN.MODE == 'step':
+        trainer = build_finetune_trainer(config)
     mixup = True
     if config.AUG.MIXUP > 0.:
         # smoothing is handled with mixup label transform

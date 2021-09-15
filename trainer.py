@@ -46,5 +46,6 @@ def build_finetune_trainer(config):
         accelerator = config.TRAIN.ACCELERATOR.MODE,
         logger = [tensorboard_logger],
         fast_dev_run = config.DEBUG_MODE,
+        val_check_interval = config.TRAIN.VAL_CHECK_INTERVAL
     )
     return trainer

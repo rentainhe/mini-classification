@@ -81,7 +81,7 @@ def build_dataset(is_train, config):
         dataset = datasets.ImageFolder(root, transform=transform)
         nb_classes = 1000
     else:
-        raise NotImplementedError("We only support CIFAR10, CIFAR100, ImageNet Now.")
+        raise NotImplementedError("We only support CIFAR100, ImageNet Now.")
 
     return dataset, nb_classes
 

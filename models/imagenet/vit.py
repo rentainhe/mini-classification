@@ -42,6 +42,7 @@ ACT2FN = {"gelu": torch.nn.functional.gelu, "relu": torch.nn.functional.relu, "s
 
 class Attention(nn.Module):
     def __init__(self, hidden_size, num_heads, attention_dropout_rate):
+        super(Attention, self).__init__()
         self.num_attention_heads = num_heads
         self.head_dim = int(hidden_size / self.num_attention_heads)
         self.all_head_dim = self.num_attention_heads * self.head_dim
@@ -57,7 +58,7 @@ class Attention(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
     
     def transpose_for_scores(self, x):
-        new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
+        new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.head_dim)
         x = x.view(*new_x_shape)
         return x.permute(0, 2, 1, 3)
     
@@ -77,7 +78,7 @@ class Attention(nn.Module):
 
         output = torch.matmul(attention_map, v)
         output = output.permute(0, 2, 1, 3).contiguous()
-        new_output_shape = output.size()[:-2] + (self.all_head_size,)
+        new_output_shape = output.size()[:-2] + (self.all_head_dim,)
         output = output.view(*new_output_shape)
         output = self.out(output)
         output = self.proj_dropout(output)
@@ -155,14 +156,14 @@ class Block(nn.Module):
     def forward(self, x):
         h = x
         x = self.attention_norm(x)
-        x, weights = self.attn(x)
+        x = self.attn(x)
         x = x + h
 
         h = x
         x = self.ffn_norm(x)
         x = self.ffn(x)
         x = x + h
-        return x, weights
+        return x
 
     def load_from(self, weights, n_block):
         ROOT = f"Transformer/encoderblock_{n_block}"
@@ -239,8 +240,8 @@ class Transformer(nn.Module):
 
     def forward(self, input_ids):
         embedding_output = self.embeddings(input_ids)
-        encoded, attn_weights = self.encoder(embedding_output)
-        return encoded, attn_weights
+        encoded = self.encoder(embedding_output)
+        return encoded
 
 class VisionTransformer(nn.Module):
     def __init__(self, classifier='token', img_size=224, patch_size=16, num_layers=12, hidden_size=768, num_heads=12, mlp_dim=3072, dropout_rate=0.1, attention_dropout_rate=0.0, num_classes=21843, zero_head=False):
@@ -344,4 +345,5 @@ def build_vit(classifier='token',
     model = VisionTransformer(classifier, img_size, patch_size, num_layers, hidden_size, num_heads, mlp_dim, dropout_rate, attention_dropout_rate, num_classes, zero_head)
     if pretrained_weight:
         model.load_from(np.load(pretrained_weight))
+        print("Load Pretrained Weight from: " + pretrained_weight)
     return model

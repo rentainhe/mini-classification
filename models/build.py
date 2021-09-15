@@ -33,7 +33,8 @@ def build_model(config):
                 dropout_rate=config.MODEL.VIT.DROPOUT_RATE,
                 attention_dropout_rate=config.MODEL.VIT.ATTENTION_DROP_RATE,
                 num_classes=config.MODEL.NUM_CLASSES,
-                zero_head=config.MODEL.VIT.ZERO_HEAD
+                zero_head=config.MODEL.VIT.ZERO_HEAD,
+                pretrained_weight=config.MODEL.VIT.PRETRAINED_WEIGHT,
             )  
     else:
         raise NotImplementedError(f"Unknown model: {model_type}")
