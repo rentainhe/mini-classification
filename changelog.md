@@ -9,7 +9,7 @@
 - Support new method: ResNet and DenseNet
 - Add `Lr Monitor`
 - Add `DDP Training` and `FP16 Training`
-- Add `Warmup Linear Scheduler`, `Warmup Cosine Scheduler`
+- Add `Warmup Linear Scheduler`, `Warmup Cosine Scheduler`, `MultiStepLR Scheduler`
 - Release `ResNet`, `DenseNet` training results on CIFAR100
 
 ### Bug Fixes
