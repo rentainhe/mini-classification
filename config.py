@@ -257,7 +257,15 @@ def update_config(config, args):
         config.DATA.DATA_PATH = args.data_path
     if args.gpu:
         config.TRAIN.ACCELERATOR.GPUS = args.gpu
-        config.TRAIN.ACCELERATOR.GPUS_PER_NODE = len(args.gpu.split(','))
+        config.TRAIN.ACCELERATOR.GPUS_PER_NODE = gpu_nums = len(args.gpu.split(','))
+        # scale steps due to ddp mode
+        if config.TRAIN.ACCELERATOR.MODE == 'ddp':
+            if config.TRAIN.ACCELERATOR.GPUS_PER_NODE > 1:
+                config.TRAIN.EPOCHS = config.TRAIN.EPOCHS // gpu_nums
+                config.TRAIN.WARMUP_EPOCHS = config.TRAIN.WARMUP_EPOCHS // gpu_nums
+                config.TRAIN.STEPS = config.TRAIN.STEPS // gpu_nums
+                config.TRAIN.WARMUP_STEPS = config.TRAIN.WARMUP_STEPS // gpu_nums
+
     if args.zip:
         config.DATA.ZIP_MODE = True
     if args.cache_mode:
