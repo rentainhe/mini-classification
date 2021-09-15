@@ -266,6 +266,7 @@ def update_config(config, args):
         config.MODEL.RESUME = args.resume
     if args.accumulation_steps:
         config.TRAIN.ACCUMULATION_STEPS = args.accumulation_steps
+        config.DATA.BATCH_SIZE = config.DATA.BATCH_SIZE // args.accumulation_steps
     if args.precision:
         config.TRAIN.PRECISION = args.precision
     if args.accelerator:
