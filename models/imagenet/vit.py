@@ -336,8 +336,12 @@ def build_vit(classifier='token',
                  dropout_rate=0.1, 
                  attention_dropout_rate=0.0, 
                  num_classes=21843, 
-                 zero_head=False
+                 zero_head=False,
+                 pretrained_weight='',
                  ):
     """Build ViT models
     """
-    return VisionTransformer(classifier, img_size, patch_size, num_layers, hidden_size, num_heads, mlp_dim, dropout_rate, attention_dropout_rate, num_classes, zero_head)
+    model = VisionTransformer(classifier, img_size, patch_size, num_layers, hidden_size, num_heads, mlp_dim, dropout_rate, attention_dropout_rate, num_classes, zero_head)
+    if pretrained_weight:
+        model.load_from(np.load(pretrained_weight))
+    return model

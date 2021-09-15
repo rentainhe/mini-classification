@@ -73,6 +73,7 @@ _C.MODEL.VIT.DROPOUT_RATE = 0.1
 _C.MODEL.VIT.CLASSIFIER = 'token'
 _C.MODEL.VIT.REPRESENTATION_SIZE = None
 _C.MODEL.VIT.ZERO_HEAD = False
+_C.MODEL.VIT.PRETRAINED_WEIGHT = ''
 # _C.MODEL.VIT.VIS = False
 
 # -----------------------------------------------------------------------------
@@ -158,7 +159,6 @@ _C.TRAIN.ACCELERATOR.GPUS_PER_NODE = 1
 _C.AUG = CN()
 # Range of size of the origin size cropped, used in RandomResizedCropAndInterpolation
 _C.AUG.SCALE = (0.08, 1)
-# 
 # Color jitter factor
 _C.AUG.COLOR_JITTER = 0.4
 # Use AutoAugment policy. "v0" or "original"

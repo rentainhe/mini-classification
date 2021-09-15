@@ -27,12 +27,12 @@ TRAIN:
     NAME: sgd
 AUG:
   MIXUP: 0.
-  RANDOM_HORIZONTAL_FLOP: 0.5
+  RANDOM_HORIZONTAL_FLIP: 0.5
   RANDOM_ROTATION: 15
 MODEL:
   LABEL_SMOOTHING: 0.
 ```
-We use `sgd` optimizer and  `cosine lr-scheduler` to trained all these models on `4 V100` in `300 epochs` without `label-smoothing` and `mixup`. You can try to get better results by modifying these hyperparameters in each model's specific config file.
+We trained all these models using `4 GPU` with `Distributed Data-Parallel Training`. You can try to get better results by modifying these hyperparameters in each model's specific config file.
 
 ### Model List
 
@@ -49,12 +49,12 @@ We use `sgd` optimizer and  `cosine lr-scheduler` to trained all these models on
 | ResNet152 | 58.3M    | 20            | 300    | SGD       |  0.1    | Cosine    | 78.29 | 94.13 |
 
 **DenseNet**
-- [**Relative Paper**]()
+- [**Relative Paper**](https://arxiv.org/abs/1608.06993v5)
 - [**Training Log**]()
 
 |    Model     | Params   | Warmup Epochs | Epochs | Optimizer | Base Lr | Scheduler | Acc1  | Acc5  |
 |:-------------|:--------:|:-------------:|:------:|:---------:|:-------:|:---------:|:-----:|:-----:|
 | DenseNet121  | 7.0M     | 20            | 300    | SGD       | 0.1     | Cosine    | 78.60 | 93.75 |
 | DenseNet169  | 12.6M    | 20            | 300    | SGD       | 0.1     | Cosine    | 78.36 | 93.87 |
-| DenseNet201  | -    | 20            | 300    | SGD       | 0.1     | Cosine    | - | - |
+| DenseNet201  | 18.3M    | 20            | 300    | SGD       | 0.1     | Cosine    | - | - |
 | DenseNet161  | -    | 20            | 300    | SGD       | 0.1     | Cosine    | - | - |
