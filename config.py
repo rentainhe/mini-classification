@@ -110,6 +110,9 @@ _C.TRAIN.PRECISION = 16
 
 # LR scheduler
 _C.TRAIN.LR_SCHEDULER = CN()
+# LR scheduler update frequency
+_C.TRAIN.LR_SCHEDULER.FREQUENCY = 'step'
+# LR scheduler type: cosine, linear, multi-step
 _C.TRAIN.LR_SCHEDULER.NAME = 'cosine'
 # Epoch interval to decay LR, used in StepLRScheduler, use int or list 
 _C.TRAIN.LR_SCHEDULER.DECAY_EPOCHS = 30

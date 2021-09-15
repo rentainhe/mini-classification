@@ -28,7 +28,7 @@ def build_scheduler(config, optimizer, n_iter_per_epoch):
         lr_scheduler = WarmupLinearSchedule(
             optimizer, warmup_steps=warmup_steps, t_total=num_steps
         )
-    elif config.TRAIN.LR_SCHEDULER.NAME == 'step':
+    elif config.TRAIN.LR_SCHEDULER.NAME == 'multi-step':
         lr_scheduler = optim.lr_scheduler.MultiStepLR(
             optimizer, milestones=config.TRAIN.LR_SCHEDULER.MULTISTONES, gamma=config.TRAIN.LR_SCHEDULER.DECAY_RATE
         )

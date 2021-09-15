@@ -84,7 +84,7 @@ def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn,
             else:
                 outputs = self.forward(samples)
                 loss = self.criterion(outputs, targets.long())
-            self.lr_scheduler.step()
+            # self.lr_scheduler.step()
             self.log('training loss', loss)
             self.log('lr', self.lr_scheduler.get_lr()[0])
             return loss
@@ -99,11 +99,11 @@ def lightning_train_wrapper(model, criterion, optimizer, lr_scheduler, mixup_fn,
 
         def configure_optimizers(self):
             optimizer = self.optimizer
-            # scheduler = {
-            #     'scheduler': self.lr_scheduler,
-            #     'interval': 'step',
-            # }
-            return {'optimizer': optimizer}
+            scheduler = {
+                'scheduler': self.lr_scheduler,
+                'interval': self.config.TRAIN.LR_SCHEDULER.FREQUENCY,
+            }
+            return {'optimizer': optimizer, 'lr_scheduler': scheduler}
     return Lightning_Training
 
 def main(config):
