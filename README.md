@@ -24,9 +24,11 @@ Mini-Classification是一个基于pytorch-lightning写的轻量化的图像分�
 
 ## 安装与使用
 ### 安装
-安装`pytorch-lightning`
+安装`pytorch-lightning`, `timm`以及其他相关库
 ```bash
 $ pip install pytorch-lightning
+$ pip install timm
+$ pip install -r requirements.txt
 ```
 
 ### 使用

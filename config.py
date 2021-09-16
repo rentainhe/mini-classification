@@ -261,8 +261,6 @@ def update_config(config, args):
         # scale steps due to ddp mode
         if config.TRAIN.ACCELERATOR.MODE == 'ddp':
             if config.TRAIN.ACCELERATOR.GPUS_PER_NODE > 1:
-                config.TRAIN.EPOCHS = config.TRAIN.EPOCHS // gpu_nums
-                config.TRAIN.WARMUP_EPOCHS = config.TRAIN.WARMUP_EPOCHS // gpu_nums
                 config.TRAIN.STEPS = config.TRAIN.STEPS // gpu_nums
                 config.TRAIN.WARMUP_STEPS = config.TRAIN.WARMUP_STEPS // gpu_nums
 
